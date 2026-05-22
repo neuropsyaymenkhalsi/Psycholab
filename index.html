@@ -2,14 +2,14 @@
 <html lang="fr" dir="ltr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
 <title>Psycholab – Plateforme Santé Mentale</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --teal:#2A7A6F;--teal-l:#3D9E91;--teal-xl:#E8F4F2;--teal-d:#1A5A52;
-  --sand:#F7F3EE;--sand-d:#EDE6DC;--cream:#FDFAF6;
+  --sand:#F7F3EE;--cream:#FDFAF6;
   --ch:#1E2A28;--mid:#4A5E5B;--soft:#8A9E9B;--border:#DDE8E6;
   --gold:#C4935A;--gold-l:#F0DEC4;--white:#FFFFFF;
   --red:#E53E3E;--red-l:#FFF5F5;--orange:#DD6B20;--orange-l:#FFFAF0;
@@ -18,375 +18,436 @@
   --r:14px;--r-lg:20px;
 }
 html{scroll-behavior:smooth}
-body{font-family:'Outfit',sans-serif;background:var(--sand);color:var(--ch);min-height:100vh;overflow-x:hidden}
+body{font-family:'Outfit',sans-serif;background:var(--sand);color:var(--ch);min-height:100vh;overflow-x:hidden;width:100%}
 
 /* ─── VIEWS ─── */
 .view{display:none}
 .view.active{display:block}
 
-/* ─── NAV ─── */
-nav{position:sticky;top:0;z-index:300;background:rgba(253,250,246,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.logo{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:600;color:var(--teal-d);text-decoration:none;letter-spacing:.02em;cursor:pointer}
+/* ══════════════════════════════════
+   NAV — MOBILE FIRST
+══════════════════════════════════ */
+nav{
+  position:sticky;top:0;z-index:300;
+  background:rgba(253,250,246,.97);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:.7rem 1rem;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.5rem;width:100%;
+}
+.logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:var(--teal-d);letter-spacing:.02em;cursor:pointer;flex-shrink:0}
 .logo span{color:var(--gold)}
-.nav-center{display:flex;gap:.3rem}
-.nav-tab{background:none;border:none;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:var(--mid);padding:.45rem .9rem;border-radius:8px;cursor:pointer;transition:all .2s;letter-spacing:.02em}
-.nav-tab:hover{background:var(--teal-xl);color:var(--teal)}
-.nav-tab.active{background:var(--teal);color:#fff}
-.nav-right{display:flex;align-items:center;gap:.7rem}
-.lang-btn{background:none;border:1.5px solid var(--border);font-family:'Outfit',sans-serif;font-size:.72rem;font-weight:500;color:var(--mid);padding:.28rem .55rem;border-radius:6px;cursor:pointer;transition:all .2s}
-.lang-btn:hover,.lang-btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
-.btn-sm{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;padding:.42rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s;border:1.5px solid transparent}
-.btn-outline{border-color:var(--teal);color:var(--teal);background:none}
-.btn-outline:hover{background:var(--teal);color:#fff}
-.btn-solid{background:var(--teal);color:#fff;border-color:var(--teal)}
-.btn-solid:hover{background:var(--teal-d)}
-.notif-bell{position:relative;cursor:pointer;background:none;border:none;font-size:1.1rem;padding:.3rem}
-.notif-dot{position:absolute;top:2px;right:2px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid var(--cream)}
+
+/* Lang switcher — hidden on mobile, shown on desktop */
+.lang-switcher{display:none;gap:.3rem}
+.lang-btn{background:none;border:1.5px solid var(--border);font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:500;color:var(--mid);padding:.25rem .5rem;border-radius:5px;cursor:pointer;transition:all .2s}
+.lang-btn.active{background:var(--teal);border-color:var(--teal);color:#fff}
+
+/* Hamburger menu button */
+.hamburger{background:none;border:1.5px solid var(--border);border-radius:8px;padding:.4rem .55rem;cursor:pointer;font-size:1rem;color:var(--mid);display:flex;align-items:center;gap:.35rem;font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500}
+.hamburger:hover{border-color:var(--teal);color:var(--teal)}
+
+/* Mobile menu drawer */
+.mobile-menu{
+  display:none;
+  position:fixed;inset:0;z-index:400;
+}
+.mobile-menu.open{display:block}
+.mm-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.mm-drawer{
+  position:absolute;top:0;right:0;bottom:0;width:280px;
+  background:var(--white);
+  box-shadow:-8px 0 32px rgba(0,0,0,.15);
+  padding:1.5rem;
+  display:flex;flex-direction:column;gap:1rem;
+  animation:slideLeft .25s ease;
+  overflow-y:auto;
+}
+@keyframes slideLeft{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.mm-close{align-self:flex-end;background:none;border:1.5px solid var(--border);border-radius:8px;padding:.4rem .8rem;font-size:.9rem;cursor:pointer;color:var(--mid)}
+.mm-section-title{font-size:.68rem;font-weight:600;color:var(--soft);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.2rem}
+.mm-btn{width:100%;text-align:left;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:500;padding:.75rem 1rem;border-radius:10px;cursor:pointer;border:none;transition:all .2s}
+.mm-btn-nav{background:var(--sand);color:var(--ch)}
+.mm-btn-nav:hover,.mm-btn-nav.active{background:var(--teal-xl);color:var(--teal)}
+.mm-btn-outline{background:none;border:1.5px solid var(--teal);color:var(--teal);text-align:center}
+.mm-btn-outline:hover{background:var(--teal);color:#fff}
+.mm-btn-solid{background:var(--teal);color:#fff;text-align:center;border:none}
+.mm-btn-solid:hover{background:var(--teal-d)}
+.mm-lang-row{display:flex;gap:.5rem}
+.mm-lang{flex:1;background:var(--sand);border:1.5px solid var(--border);border-radius:7px;padding:.5rem;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;color:var(--mid);cursor:pointer;text-align:center;transition:all .2s}
+.mm-lang.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.mm-divider{height:1px;background:var(--border);margin:.2rem 0}
+
+/* Notification badge on hamburger */
+.ham-notif{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-left:.2rem;vertical-align:middle}
+
+/* Desktop nav — shown above 768px */
+@media(min-width:769px){
+  nav{padding:.85rem 2rem}
+  .hamburger{display:none}
+  .lang-switcher{display:flex}
+  .nav-desktop-right{display:flex;align-items:center;gap:.7rem}
+  .btn-sm{font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:500;padding:.42rem 1rem;border-radius:8px;cursor:pointer;transition:all .2s;border:1.5px solid transparent}
+  .btn-outline{border-color:var(--teal);color:var(--teal);background:none}
+  .btn-outline:hover{background:var(--teal);color:#fff}
+  .btn-solid{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .btn-solid:hover{background:var(--teal-d)}
+}
+@media(max-width:768px){
+  .nav-desktop-right{display:none}
+  .logo{font-size:1.2rem}
+}
 
 /* ─── HERO ─── */
-.hero{background:linear-gradient(135deg,var(--teal-d) 0%,var(--teal) 55%,var(--teal-l) 100%);padding:4rem 2rem 3rem;text-align:center;position:relative;overflow:hidden}
+.hero{background:linear-gradient(135deg,var(--teal-d) 0%,var(--teal) 55%,var(--teal-l) 100%);padding:3rem 1.2rem 2.5rem;text-align:center;position:relative;overflow:hidden}
 .hero::after{content:'';position:absolute;bottom:-40px;left:50%;transform:translateX(-50%);width:140%;height:80px;background:var(--sand);border-radius:50% 50% 0 0}
-.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:.72rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:.35rem .9rem;border-radius:20px;margin-bottom:1.2rem;backdrop-filter:blur(8px)}
-.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:600;color:#fff;line-height:1.15;margin-bottom:.8rem;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:rgba(255,255,255,.9);font-size:.68rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:.3rem .8rem;border-radius:20px;margin-bottom:1rem;backdrop-filter:blur(8px)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,6vw,3.2rem);font-weight:600;color:#fff;line-height:1.15;margin-bottom:.7rem;position:relative;z-index:1}
 .hero h1 em{font-style:italic;color:var(--gold-l)}
-.hero p{color:rgba(255,255,255,.75);font-size:.95rem;font-weight:300;max-width:540px;margin:0 auto 2rem;position:relative;z-index:1;line-height:1.65}
-.trust-row{display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;position:relative;z-index:1}
-.trust-item{display:flex;align-items:center;gap:.5rem;color:rgba(255,255,255,.8);font-size:.78rem}
-.trust-icon{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.9rem}
+.hero p{color:rgba(255,255,255,.75);font-size:.88rem;font-weight:300;max-width:540px;margin:0 auto 1.8rem;position:relative;z-index:1;line-height:1.65}
+.trust-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;max-width:380px;margin:0 auto;position:relative;z-index:1}
+.trust-item{display:flex;align-items:center;gap:.45rem;color:rgba(255,255,255,.85);font-size:.75rem;background:rgba(255,255,255,.1);border-radius:8px;padding:.4rem .6rem}
+.trust-icon{font-size:.9rem;flex-shrink:0}
+@media(min-width:600px){
+  .trust-row{grid-template-columns:repeat(4,1fr);max-width:700px}
+  .hero{padding:4rem 2rem 3rem}
+}
 
 /* ─── SEARCH BLOCK ─── */
-.search-block{max-width:860px;margin:-1.5rem auto 2.5rem;padding:0 1.5rem;position:relative;z-index:10}
-.search-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1rem 1.2rem;box-shadow:var(--sh-lg);display:grid;grid-template-columns:1fr auto auto auto;gap:.8rem;align-items:center}
-.si-wrap{display:flex;align-items:center;gap:.6rem;border-right:1.5px solid var(--border);padding-right:1rem}
+.search-block{max-width:860px;margin:-1.2rem auto 2rem;padding:0 1rem;position:relative;z-index:10}
+.search-box{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:.9rem 1rem;box-shadow:var(--sh-lg);display:flex;flex-direction:column;gap:.7rem}
+.si-wrap{display:flex;align-items:center;gap:.6rem;border-bottom:1.5px solid var(--border);padding-bottom:.7rem}
 .si-wrap input{border:none;outline:none;background:none;font-family:'Outfit',sans-serif;font-size:.9rem;color:var(--ch);width:100%}
 .si-wrap input::placeholder{color:var(--soft)}
-.fsel{border:1.5px solid var(--border);border-radius:9px;background:var(--white);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--mid);padding:.5rem .9rem;cursor:pointer;outline:none}
-.btn-srch{background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;padding:.6rem 1.4rem;border-radius:10px;cursor:pointer;transition:background .2s;white-space:nowrap}
+.search-filters{display:flex;gap:.6rem;flex-wrap:wrap}
+.fsel{border:1.5px solid var(--border);border-radius:9px;background:var(--white);font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--mid);padding:.5rem .7rem;cursor:pointer;outline:none;flex:1;min-width:120px}
+.btn-srch{background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;padding:.6rem 1.2rem;border-radius:10px;cursor:pointer;transition:background .2s;white-space:nowrap;width:100%}
 .btn-srch:hover{background:var(--teal-d)}
+@media(min-width:600px){
+  .search-box{flex-direction:row;align-items:center}
+  .si-wrap{border-bottom:none;border-right:1.5px solid var(--border);padding-bottom:0;padding-right:1rem;flex:1}
+  .search-filters{flex-wrap:nowrap}
+  .fsel{flex:none;width:auto}
+  .btn-srch{width:auto}
+}
 
-/* ─── SPECS LIST ─── */
-.section{max-width:1100px;margin:0 auto;padding:0 1.5rem 4rem}
-.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.4rem}
-.section-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ch)}
-.count-badge{background:var(--teal-xl);color:var(--teal-d);font-size:.78rem;font-weight:600;padding:.3rem .75rem;border-radius:20px}
-.spec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1.2rem}
+/* ─── SPECS ─── */
+.section{max-width:1100px;margin:0 auto;padding:0 1rem 4rem}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.section-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:var(--ch)}
+.count-badge{background:var(--teal-xl);color:var(--teal-d);font-size:.75rem;font-weight:600;padding:.3rem .7rem;border-radius:20px}
+.spec-grid{display:grid;grid-template-columns:1fr;gap:1rem}
+@media(min-width:500px){.spec-grid{grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}}
 
-.spec-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.5rem;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.spec-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.3rem;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
 .spec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--teal-l));opacity:0;transition:opacity .25s}
-.spec-card:hover{border-color:var(--teal-l);box-shadow:var(--sh-lg);transform:translateY(-3px)}
-.spec-card:hover::before{opacity:1}
-.card-top{display:flex;gap:1rem;margin-bottom:1rem}
-.avatar{width:60px;height:60px;border-radius:14px;background:linear-gradient(135deg,var(--teal-xl),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
-.c-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--ch);margin-bottom:.2rem}
-.c-title{font-size:.75rem;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
-.stars{color:var(--gold);font-size:.8rem}
-.stars span{color:var(--soft);font-size:.73rem;margin-left:.3rem}
-.card-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:1rem}
-.tag{background:var(--teal-xl);color:var(--teal-d);font-size:.68rem;font-weight:500;padding:.22rem .55rem;border-radius:20px}
+.spec-card:hover{border-color:var(--teal-l);box-shadow:var(--sh-lg)}
+.spec-card:hover::before,.spec-card:active::before{opacity:1}
+.card-top{display:flex;gap:.9rem;margin-bottom:.9rem}
+.avatar{width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--teal-xl),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.c-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--ch);margin-bottom:.15rem}
+.c-title{font-size:.72rem;color:var(--teal);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.25rem}
+.stars{color:var(--gold);font-size:.75rem}
+.stars span{color:var(--soft);font-size:.7rem;margin-left:.25rem}
+.card-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.9rem}
+.tag{background:var(--teal-xl);color:var(--teal-d);font-size:.65rem;font-weight:500;padding:.2rem .5rem;border-radius:20px}
 .tag.lang{background:var(--gold-l);color:#7A5520}
 .tag.vid{background:#EEF2FF;color:#3B5BDB}
-.card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:.9rem;border-top:1px solid var(--border)}
-.price-big{font-size:1.1rem;font-weight:700;color:var(--teal-d)}
-.price-big small{font-size:.7rem;font-weight:400;color:var(--soft);display:block}
-.next-slot{text-align:right;font-size:.75rem;color:var(--mid)}
-.next-slot strong{display:block;color:var(--teal);font-size:.8rem}
-.btn-book-card{width:100%;margin-top:1rem;background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;padding:.65rem;border-radius:10px;cursor:pointer;transition:background .2s}
-.btn-book-card:hover{background:var(--teal-d)}
+.card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:.8rem;border-top:1px solid var(--border)}
+.price-big{font-size:1.05rem;font-weight:700;color:var(--teal-d)}
+.price-big small{font-size:.68rem;font-weight:400;color:var(--soft);display:block}
+.next-slot{text-align:right;font-size:.72rem;color:var(--mid)}
+.next-slot strong{display:block;color:var(--teal);font-size:.78rem}
+.btn-book-card{width:100%;margin-top:.9rem;background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;padding:.65rem;border-radius:10px;cursor:pointer;transition:background .2s}
+.btn-book-card:hover,.btn-book-card:active{background:var(--teal-d)}
 
 /* ─── BOOKING MODAL ─── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;justify-content:center;padding:0}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:var(--r-lg);width:100%;max-width:900px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.25);animation:slideUp .35s ease}
-@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-header{position:sticky;top:0;z-index:10;background:var(--white);border-bottom:1px solid var(--border);padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;color:var(--ch)}
-.modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--soft);padding:.2rem .5rem;border-radius:6px;transition:all .2s}
-.modal-close:hover{background:var(--sand);color:var(--ch)}
-.modal-body{padding:1.5rem}
+.modal{background:var(--white);border-radius:var(--r-lg) var(--r-lg) 0 0;width:100%;max-width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.2);animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{position:sticky;top:0;z-index:10;background:var(--white);border-bottom:1px solid var(--border);padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--ch)}
+.modal-close{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--soft);padding:.2rem .5rem;border-radius:6px}
+.modal-body{padding:1.2rem}
 
-/* Stepper inside modal */
-.m-stepper{display:flex;align-items:center;margin-bottom:2rem}
+@media(min-width:700px){
+  .modal-overlay{align-items:center;padding:1rem}
+  .modal{border-radius:var(--r-lg);max-width:900px;max-height:90vh}
+}
+
+/* Stepper */
+.m-stepper{display:flex;align-items:center;margin-bottom:1.5rem}
 .m-step{display:flex;align-items:center;flex:1}
 .m-step:last-child{flex:0}
-.m-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:600;border:2px solid var(--border);background:var(--white);color:var(--soft);flex-shrink:0;transition:all .3s}
-.m-step.active .m-dot{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 0 4px var(--teal-xl)}
+.m-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:600;border:2px solid var(--border);background:var(--white);color:var(--soft);flex-shrink:0;transition:all .3s}
+.m-step.active .m-dot{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 0 3px var(--teal-xl)}
 .m-step.done .m-dot{background:var(--teal-d);border-color:var(--teal-d);color:#fff}
-.m-label{margin:0 .5rem;font-size:.7rem;font-weight:500;color:var(--soft);white-space:nowrap;transition:color .3s}
+.m-label{margin:0 .4rem;font-size:.65rem;font-weight:500;color:var(--soft);white-space:nowrap;transition:color .3s}
 .m-step.active .m-label{color:var(--teal);font-weight:600}
 .m-step.done .m-label{color:var(--teal-d)}
 .m-line{flex:1;height:2px;background:var(--border);transition:background .3s}
 .m-step.done .m-line{background:var(--teal-d)}
 
-/* Steps content */
 .m-panel{display:none;animation:fadeUp .3s ease both}
 .m-panel.active{display:block}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 
-/* Booking layout */
-.book-layout{display:grid;grid-template-columns:1fr 280px;gap:1.5rem;align-items:start}
-@media(max-width:620px){.book-layout{grid-template-columns:1fr}.search-box{grid-template-columns:1fr}}
+/* Book layout — mobile stacked, desktop side-by-side */
+.book-layout{display:flex;flex-direction:column;gap:1.2rem}
+@media(min-width:650px){.book-layout{flex-direction:row;align-items:start}}
 
 /* Cal */
-.cal-card{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1.2rem}
-.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.9rem}
+.cal-card{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;flex:1}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem}
 .cal-nav button{background:none;border:1.5px solid var(--border);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:.85rem;color:var(--mid);transition:all .2s}
 .cal-nav button:hover{background:var(--teal);border-color:var(--teal);color:#fff}
 .cal-month-lbl{font-weight:600;font-size:.85rem;color:var(--ch)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
-.cday-name{text-align:center;font-size:.62rem;font-weight:600;color:var(--soft);text-transform:uppercase;padding:.3rem 0;letter-spacing:.04em}
-.cday{text-align:center;padding:.45rem .15rem;border-radius:7px;font-size:.8rem;cursor:pointer;transition:all .2s;color:var(--mid)}
+.cday-name{text-align:center;font-size:.58rem;font-weight:600;color:var(--soft);text-transform:uppercase;padding:.25rem 0;letter-spacing:.03em}
+.cday{text-align:center;padding:.42rem .1rem;border-radius:6px;font-size:.78rem;cursor:pointer;transition:all .2s;color:var(--mid)}
 .cday:hover:not(.empty):not(.past){background:var(--teal-xl);color:var(--teal)}
 .cday.today{font-weight:700;color:var(--teal)}
 .cday.has-slot{color:var(--ch);font-weight:500}
-.cday.has-slot::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--teal);margin:.15rem auto 0}
+.cday.has-slot::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--teal);margin:.12rem auto 0}
 .cday.selected{background:var(--teal);color:#fff;font-weight:600}
 .cday.selected::after{background:#fff}
 .cday.past{opacity:.3;cursor:default}
 .cday.empty{cursor:default}
 
-/* Slots */
 .slots-area{margin-top:1rem}
-.slots-label{font-size:.72rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.6rem}
-.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.4rem}
-.slot{background:var(--white);border:1.5px solid var(--border);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;color:var(--mid);padding:.42rem;border-radius:7px;cursor:pointer;transition:all .2s;text-align:center}
+.slots-label{font-size:.7rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem}
+.slots-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.35rem}
+.slot{background:var(--white);border:1.5px solid var(--border);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:500;color:var(--mid);padding:.4rem;border-radius:7px;cursor:pointer;transition:all .2s;text-align:center}
 .slot:hover{background:var(--teal-xl);border-color:var(--teal);color:var(--teal)}
 .slot.sel{background:var(--teal);border-color:var(--teal);color:#fff}
 .slot.busy{opacity:.35;cursor:not-allowed;text-decoration:line-through}
 
-/* Type select */
-.type-row{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:1rem}
-.type-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:.9rem;cursor:pointer;transition:all .2s;text-align:center}
-.type-card:hover{border-color:var(--teal-l)}
+.type-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.9rem}
+.type-card{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:.8rem;cursor:pointer;transition:all .2s;text-align:center}
 .type-card.sel{border-color:var(--teal);background:var(--teal-xl)}
-.type-icon{font-size:1.3rem;margin-bottom:.3rem}
-.type-lbl{font-size:.78rem;font-weight:600;color:var(--ch)}
-.type-sub{font-size:.66rem;color:var(--soft);margin-top:.1rem}
+.type-icon{font-size:1.2rem;margin-bottom:.25rem}
+.type-lbl{font-size:.76rem;font-weight:600;color:var(--ch)}
+.type-sub{font-size:.63rem;color:var(--soft);margin-top:.1rem}
 
 /* Summary sidebar */
-.sum-card{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1.2rem;position:sticky;top:10px}
-.sum-card h4{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--ch);margin-bottom:1rem;padding-bottom:.7rem;border-bottom:1px solid var(--border)}
-.sum-row{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.8rem}
-.sum-ico{width:30px;height:30px;border-radius:7px;background:var(--teal-xl);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
-.sum-k{font-size:.68rem;color:var(--soft);margin-bottom:.05rem}
-.sum-v{font-size:.82rem;font-weight:500;color:var(--ch)}
+.sum-card{background:var(--sand);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;width:100%}
+@media(min-width:650px){.sum-card{width:240px;flex-shrink:0;position:sticky;top:10px}}
+.sum-card h4{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:600;color:var(--ch);margin-bottom:.9rem;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.sum-row{display:flex;gap:.55rem;align-items:flex-start;margin-bottom:.7rem}
+.sum-ico{width:28px;height:28px;border-radius:7px;background:var(--teal-xl);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.sum-k{font-size:.65rem;color:var(--soft);margin-bottom:.03rem}
+.sum-v{font-size:.8rem;font-weight:500;color:var(--ch)}
 .sum-v.empty{color:var(--soft);font-style:italic;font-weight:300}
-.divider{height:1px;background:var(--border);margin:.6rem 0 .9rem}
-.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
-.total-lbl{font-size:.82rem;color:var(--mid)}
-.total-val{font-size:1.15rem;font-weight:700;color:var(--teal-d)}
-.btn-confirm{width:100%;background:linear-gradient(135deg,var(--teal),var(--teal-l));color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.88rem;font-weight:600;padding:.8rem;border-radius:11px;cursor:pointer;transition:all .25s;box-shadow:0 4px 14px rgba(42,122,111,.28)}
-.btn-confirm:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(42,122,111,.38)}
-.btn-confirm:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-.secure-note{display:flex;align-items:center;gap:.35rem;margin-top:.6rem;font-size:.67rem;color:var(--soft);justify-content:center}
+.divider{height:1px;background:var(--border);margin:.5rem 0 .8rem}
+.total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem}
+.total-lbl{font-size:.8rem;color:var(--mid)}
+.total-val{font-size:1.1rem;font-weight:700;color:var(--teal-d)}
+.btn-confirm{width:100%;background:linear-gradient(135deg,var(--teal),var(--teal-l));color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.86rem;font-weight:600;padding:.75rem;border-radius:10px;cursor:pointer;transition:all .25s;box-shadow:0 4px 14px rgba(42,122,111,.25)}
+.btn-confirm:disabled{opacity:.4;cursor:not-allowed}
+.secure-note{display:flex;align-items:center;gap:.35rem;margin-top:.6rem;font-size:.65rem;color:var(--soft);justify-content:center}
 
 /* Patient form */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
-.fg{display:flex;flex-direction:column;gap:.38rem}
+.form-grid{display:grid;grid-template-columns:1fr;gap:.9rem;margin-bottom:.9rem}
+@media(min-width:480px){.form-grid{grid-template-columns:1fr 1fr}}
+.fg{display:flex;flex-direction:column;gap:.35rem}
 .fg.full{grid-column:1/-1}
-.fg label{font-size:.75rem;font-weight:500;color:var(--mid);letter-spacing:.03em}
+.fg label{font-size:.73rem;font-weight:500;color:var(--mid)}
 .fg input,.fg textarea,.fg select{border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.86rem;color:var(--ch);padding:.6rem .85rem;background:var(--sand);outline:none;transition:border-color .2s;width:100%}
 .fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--teal);background:var(--white)}
 .fg textarea{resize:vertical;min-height:80px;line-height:1.5}
-.cb-row{display:flex;align-items:flex-start;gap:.65rem;padding:.9rem;background:var(--sand);border-radius:9px;border:1.5px solid var(--border);margin-bottom:.8rem}
+.cb-row{display:flex;align-items:flex-start;gap:.6rem;padding:.85rem;background:var(--sand);border-radius:9px;border:1.5px solid var(--border);margin-bottom:.7rem}
 .cb-row input[type=checkbox]{width:16px;height:16px;margin-top:.15rem;flex-shrink:0;accent-color:var(--teal)}
-.cb-txt{font-size:.77rem;color:var(--mid);line-height:1.5}
+.cb-txt{font-size:.75rem;color:var(--mid);line-height:1.5}
 .cb-txt strong{color:var(--ch)}
 
-/* Confirm screen */
-.conf-wrap{text-align:center;padding:1rem 0}
-.conf-icon{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 1.2rem;box-shadow:0 8px 28px rgba(42,122,111,.3);animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+/* Confirm */
+.conf-wrap{text-align:center;padding:.5rem 0}
+.conf-icon{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin:0 auto 1rem;box-shadow:0 8px 28px rgba(42,122,111,.3);animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
 @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-.conf-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:600;color:var(--ch);margin-bottom:.5rem}
-.conf-sub{color:var(--mid);font-size:.88rem;line-height:1.6;margin-bottom:1.5rem}
-.notif-badges{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
-.nbadge{display:flex;align-items:center;gap:.4rem;background:var(--white);border:1.5px solid var(--border);border-radius:30px;padding:.4rem .9rem;font-size:.75rem;color:var(--mid);box-shadow:var(--sh)}
-.conf-details{background:var(--sand);border-radius:var(--r);padding:1.2rem;text-align:left;margin-bottom:1.5rem}
-.conf-details h4{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--ch);margin-bottom:.9rem}
-.conf-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.7rem}
-.conf-ico{width:34px;height:34px;border-radius:8px;background:var(--teal-xl);display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.conf-k{font-size:.68rem;color:var(--soft);margin-bottom:.05rem}
-.conf-v{font-size:.84rem;font-weight:500;color:var(--ch)}
-.conf-actions{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
-.btn-act-p{background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;padding:.65rem 1.4rem;border-radius:9px;cursor:pointer;transition:background .2s}
-.btn-act-p:hover{background:var(--teal-d)}
-.btn-act-s{background:var(--white);color:var(--teal);border:1.5px solid var(--teal);font-family:'Outfit',sans-serif;font-size:.85rem;font-weight:500;padding:.65rem 1.4rem;border-radius:9px;cursor:pointer;transition:all .2s}
-.btn-act-s:hover{background:var(--teal-xl)}
+.conf-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ch);margin-bottom:.4rem}
+.conf-sub{color:var(--mid);font-size:.85rem;line-height:1.6;margin-bottom:1.2rem}
+.notif-badges{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.2rem}
+.nbadge{display:flex;align-items:center;gap:.35rem;background:var(--white);border:1.5px solid var(--border);border-radius:30px;padding:.35rem .8rem;font-size:.72rem;color:var(--mid);box-shadow:var(--sh)}
+.conf-details{background:var(--sand);border-radius:var(--r);padding:1rem;text-align:left;margin-bottom:1.2rem}
+.conf-details h4{font-family:'Playfair Display',serif;font-size:.9rem;color:var(--ch);margin-bottom:.8rem}
+.conf-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.6rem}
+.conf-ico{width:32px;height:32px;border-radius:8px;background:var(--teal-xl);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+.conf-k{font-size:.65rem;color:var(--soft);margin-bottom:.03rem}
+.conf-v{font-size:.82rem;font-weight:500;color:var(--ch)}
+.conf-actions{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap}
+.btn-act-p{background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:500;padding:.6rem 1.2rem;border-radius:9px;cursor:pointer}
+.btn-act-s{background:var(--white);color:var(--teal);border:1.5px solid var(--teal);font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:500;padding:.6rem 1.2rem;border-radius:9px;cursor:pointer}
 
 /* ══════════════════════════════════
    PRO DASHBOARD
 ══════════════════════════════════ */
-.pro-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 57px);max-width:1200px;margin:0 auto;padding:1.5rem;gap:1.5rem}
-.pro-sidebar{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.2rem;height:fit-content;position:sticky;top:75px}
+.pro-layout{display:flex;flex-direction:column;gap:1.2rem;max-width:1150px;margin:0 auto;padding:1.2rem 1rem 4rem}
+@media(min-width:769px){.pro-layout{flex-direction:row;padding:1.5rem 1.5rem 4rem}}
+
+.pro-sidebar{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.2rem}
+@media(min-width:769px){.pro-sidebar{width:210px;flex-shrink:0;position:sticky;top:75px;height:fit-content}}
 .pro-profile{text-align:center;padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid var(--border)}
-.pro-avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal-xl),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto .6rem}
-.pro-name{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:600;color:var(--ch);margin-bottom:.15rem}
-.pro-spec{font-size:.72rem;color:var(--teal);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.pro-status{display:inline-flex;align-items:center;gap:.35rem;margin-top:.5rem;font-size:.7rem;color:var(--green);background:var(--green-l);padding:.25rem .6rem;border-radius:20px;font-weight:500}
+.pro-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--teal-xl),var(--teal-l));display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto .5rem}
+.pro-name{font-family:'Playfair Display',serif;font-size:.9rem;font-weight:600;color:var(--ch);margin-bottom:.12rem}
+.pro-spec{font-size:.68rem;color:var(--teal);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.pro-status{display:inline-flex;align-items:center;gap:.3rem;margin-top:.4rem;font-size:.68rem;color:var(--green);background:var(--green-l);padding:.22rem .55rem;border-radius:20px;font-weight:500}
 .pro-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green)}
-.sidebar-nav{display:flex;flex-direction:column;gap:.25rem}
-.snav-item{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;border-radius:9px;cursor:pointer;font-size:.82rem;color:var(--mid);font-weight:400;transition:all .2s;background:none;border:none;font-family:'Outfit',sans-serif;text-align:left;width:100%}
+.sidebar-nav{display:flex;flex-direction:column;gap:.2rem}
+.snav-item{display:flex;align-items:center;gap:.55rem;padding:.55rem .75rem;border-radius:9px;cursor:pointer;font-size:.8rem;color:var(--mid);font-weight:400;transition:all .2s;background:none;border:none;font-family:'Outfit',sans-serif;text-align:left;width:100%}
 .snav-item:hover{background:var(--teal-xl);color:var(--teal)}
 .snav-item.active{background:var(--teal);color:#fff;font-weight:500}
-.snav-ico{font-size:1rem;width:20px;text-align:center}
-.snav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.6rem;font-weight:700;padding:.1rem .45rem;border-radius:20px}
+.snav-ico{font-size:.95rem;width:18px;text-align:center}
+.snav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .4rem;border-radius:20px}
 .snav-item.active .snav-badge{background:rgba(255,255,255,.3)}
 
-/* Pro main */
-.pro-main{}
+.pro-main{flex:1;min-width:0}
 .dash-section{display:none}
 .dash-section.active{display:block;animation:fadeUp .3s ease}
 
-/* Stats row */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
-.stat-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem 1.2rem}
-.stat-val{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:600;color:var(--ch);margin-bottom:.2rem}
-.stat-lbl{font-size:.75rem;color:var(--soft);font-weight:400}
-.stat-trend{font-size:.7rem;margin-top:.3rem}
+/* Stats */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1.2rem}
+@media(min-width:600px){.stats-row{grid-template-columns:repeat(4,1fr)}}
+.stat-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem}
+.stat-val{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:600;color:var(--ch);margin-bottom:.15rem}
+.stat-lbl{font-size:.72rem;color:var(--soft)}
+.stat-trend{font-size:.68rem;margin-top:.25rem}
 .stat-trend.up{color:var(--green)}
 .stat-trend.neutral{color:var(--soft)}
 
 /* RDV list */
-.rdv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
-.rdv-header h3{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ch)}
-.filter-tabs{display:flex;gap:.3rem}
-.ftab{background:none;border:1.5px solid var(--border);font-family:'Outfit',sans-serif;font-size:.75rem;color:var(--mid);padding:.35rem .75rem;border-radius:7px;cursor:pointer;transition:all .2s}
+.rdv-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.6rem}
+.rdv-header h3{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch)}
+.filter-tabs{display:flex;gap:.3rem;flex-wrap:wrap}
+.ftab{background:none;border:1.5px solid var(--border);font-family:'Outfit',sans-serif;font-size:.72rem;color:var(--mid);padding:.32rem .65rem;border-radius:7px;cursor:pointer;transition:all .2s}
 .ftab:hover{border-color:var(--teal);color:var(--teal)}
 .ftab.active{background:var(--teal);border-color:var(--teal);color:#fff}
 
-.rdv-list{display:flex;flex-direction:column;gap:.8rem}
-.rdv-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem 1.3rem;display:grid;grid-template-columns:auto 1fr auto auto;gap:1rem;align-items:center;transition:all .2s}
+.rdv-list{display:flex;flex-direction:column;gap:.7rem}
+.rdv-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem;display:flex;flex-direction:column;gap:.7rem;transition:all .2s}
+@media(min-width:600px){.rdv-item{flex-direction:row;align-items:center}}
 .rdv-item:hover{border-color:var(--teal-l);box-shadow:var(--sh)}
 .rdv-item.pending{border-left:4px solid var(--orange)}
 .rdv-item.confirmed{border-left:4px solid var(--green)}
 .rdv-item.cancelled{border-left:4px solid var(--red);opacity:.65}
-.rdv-date-box{text-align:center;background:var(--sand);border-radius:9px;padding:.5rem .7rem;min-width:52px}
-.rdv-day{font-size:1.3rem;font-weight:700;color:var(--ch);line-height:1}
-.rdv-mon{font-size:.62rem;text-transform:uppercase;color:var(--soft);letter-spacing:.05em}
-.rdv-info{}
-.rdv-patient{font-size:.9rem;font-weight:600;color:var(--ch);margin-bottom:.2rem}
-.rdv-meta{font-size:.75rem;color:var(--soft)}
-.rdv-time{font-size:.88rem;font-weight:500;color:var(--mid);text-align:center}
-.rdv-time span{display:block;font-size:.68rem;color:var(--soft)}
-.rdv-actions{display:flex;gap:.5rem}
-.btn-accept{background:var(--green-l);color:var(--green);border:1.5px solid var(--green);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;padding:.38rem .8rem;border-radius:7px;cursor:pointer;transition:all .2s;white-space:nowrap}
-.btn-accept:hover{background:var(--green);color:#fff}
-.btn-decline{background:var(--red-l);color:var(--red);border:1.5px solid var(--red);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;padding:.38rem .8rem;border-radius:7px;cursor:pointer;transition:all .2s}
-.btn-decline:hover{background:var(--red);color:#fff}
-.btn-join{background:var(--blue-l);color:var(--blue);border:1.5px solid var(--blue);font-family:'Outfit',sans-serif;font-size:.75rem;font-weight:600;padding:.38rem .8rem;border-radius:7px;cursor:pointer;transition:all .2s}
-.btn-join:hover{background:var(--blue);color:#fff}
-.status-badge{font-size:.7rem;font-weight:600;padding:.25rem .65rem;border-radius:20px;white-space:nowrap}
+.rdv-date-box{text-align:center;background:var(--sand);border-radius:9px;padding:.45rem .65rem;min-width:48px;align-self:flex-start}
+.rdv-day{font-size:1.2rem;font-weight:700;color:var(--ch);line-height:1}
+.rdv-mon{font-size:.58rem;text-transform:uppercase;color:var(--soft);letter-spacing:.04em}
+.rdv-info{flex:1}
+.rdv-patient{font-size:.88rem;font-weight:600;color:var(--ch);margin-bottom:.15rem}
+.rdv-meta{font-size:.72rem;color:var(--soft)}
+.rdv-time{font-size:.85rem;font-weight:500;color:var(--mid)}
+.rdv-time span{display:block;font-size:.65rem;color:var(--soft)}
+.rdv-actions{display:flex;gap:.45rem;flex-wrap:wrap}
+.btn-accept{background:var(--green-l);color:var(--green);border:1.5px solid var(--green);font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:600;padding:.35rem .75rem;border-radius:7px;cursor:pointer;transition:all .2s}
+.btn-accept:hover,.btn-accept:active{background:var(--green);color:#fff}
+.btn-decline{background:var(--red-l);color:var(--red);border:1.5px solid var(--red);font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:600;padding:.35rem .75rem;border-radius:7px;cursor:pointer;transition:all .2s}
+.btn-decline:hover,.btn-decline:active{background:var(--red);color:#fff}
+.btn-join{background:var(--blue-l);color:var(--blue);border:1.5px solid var(--blue);font-family:'Outfit',sans-serif;font-size:.73rem;font-weight:600;padding:.35rem .75rem;border-radius:7px;cursor:pointer}
+.status-badge{font-size:.68rem;font-weight:600;padding:.22rem .6rem;border-radius:20px;white-space:nowrap}
 .status-badge.pending{background:var(--orange-l);color:var(--orange)}
 .status-badge.confirmed{background:var(--green-l);color:var(--green)}
 .status-badge.cancelled{background:var(--red-l);color:var(--red)}
 
-/* Agenda / Calendar */
-.week-cal{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden}
-.week-nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:1px solid var(--border)}
-.week-nav button{background:none;border:1.5px solid var(--border);width:30px;height:30px;border-radius:7px;cursor:pointer;font-size:.85rem;color:var(--mid);transition:all .2s}
+/* Week cal */
+.week-cal{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);overflow:hidden;overflow-x:auto}
+.week-nav{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.1rem;border-bottom:1px solid var(--border)}
+.week-nav button{background:none;border:1.5px solid var(--border);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:.8rem;color:var(--mid)}
 .week-nav button:hover{background:var(--teal);color:#fff;border-color:var(--teal)}
-.week-lbl{font-size:.88rem;font-weight:600;color:var(--ch)}
-.week-grid{display:grid;grid-template-columns:60px repeat(7,1fr)}
-.wg-header{background:var(--sand);padding:.6rem .4rem;text-align:center;font-size:.72rem;font-weight:600;color:var(--mid);border-right:1px solid var(--border);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
-.wg-time{background:var(--sand);padding:.5rem .4rem;text-align:right;font-size:.65rem;color:var(--soft);border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding-right:.6rem}
-.wg-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:44px;position:relative;transition:background .2s}
-.wg-cell:hover{background:var(--teal-xl)}
-.wg-event{position:absolute;inset:2px;border-radius:5px;padding:.15rem .35rem;font-size:.65rem;font-weight:600;overflow:hidden;cursor:pointer;transition:opacity .2s}
-.wg-event:hover{opacity:.85}
+.week-lbl{font-size:.85rem;font-weight:600;color:var(--ch)}
+.week-grid{display:grid;grid-template-columns:50px repeat(7,minmax(70px,1fr));min-width:560px}
+.wg-header{background:var(--sand);padding:.55rem .35rem;text-align:center;font-size:.65rem;font-weight:600;color:var(--mid);border-right:1px solid var(--border);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.03em}
+.wg-time{background:var(--sand);padding:.45rem .35rem;text-align:right;font-size:.62rem;color:var(--soft);border-right:1px solid var(--border);border-bottom:1px solid var(--border);padding-right:.55rem}
+.wg-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:40px;position:relative}
+.wg-event{position:absolute;inset:2px;border-radius:4px;padding:.12rem .3rem;font-size:.62rem;font-weight:600;overflow:hidden;cursor:pointer}
 .wg-event.confirmed{background:#C6F6D5;color:#22543D;border-left:3px solid var(--green)}
 .wg-event.pending{background:#FEEBC8;color:#744210;border-left:3px solid var(--orange)}
 .wg-event.video{background:#BEE3F8;color:#2A4365;border-left:3px solid var(--blue)}
 
-/* Availability manager */
-.avail-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.5rem;margin-bottom:1.2rem}
-.avail-day{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:.7rem .5rem;text-align:center}
-.avail-day-name{font-size:.7rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.5rem}
-.avail-toggle{display:flex;align-items:center;justify-content:center;margin-bottom:.4rem}
-.toggle-sw{position:relative;width:36px;height:20px}
+/* Availability */
+.avail-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.4rem;margin-bottom:1rem}
+.avail-day{background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:.6rem .4rem;text-align:center}
+.avail-day-name{font-size:.62rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.03em;margin-bottom:.4rem}
+.toggle-sw{position:relative;width:34px;height:18px;display:block;margin:0 auto .35rem}
 .toggle-sw input{opacity:0;width:0;height:0}
-.toggle-sl{position:absolute;inset:0;background:#CBD5E0;border-radius:20px;cursor:pointer;transition:.2s}
-.toggle-sl::before{content:'';position:absolute;width:14px;height:14px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.toggle-sl{position:absolute;inset:0;background:#CBD5E0;border-radius:18px;cursor:pointer;transition:.2s}
+.toggle-sl::before{content:'';position:absolute;width:12px;height:12px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
 input:checked+.toggle-sl{background:var(--teal)}
 input:checked+.toggle-sl::before{transform:translateX(16px)}
-.avail-slots{font-size:.65rem;color:var(--soft)}
+.avail-slots{font-size:.6rem;color:var(--soft)}
 
-/* Notif panel */
-.notif-list{display:flex;flex-direction:column;gap:.7rem}
-.notif-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.2rem;display:flex;gap:.9rem;align-items:flex-start;transition:border-color .2s}
+/* Notifs */
+.notif-list{display:flex;flex-direction:column;gap:.6rem}
+.notif-item{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:.9rem 1.1rem;display:flex;gap:.8rem;align-items:flex-start}
 .notif-item.unread{border-color:var(--teal-l);background:#FAFFFE}
-.notif-item.unread::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;margin-top:.4rem}
-.notif-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.notif-ico{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0}
 .notif-ico.new{background:#FEEBC8}
 .notif-ico.remind{background:var(--teal-xl)}
 .notif-ico.cancel{background:var(--red-l)}
 .notif-body{flex:1}
-.notif-title{font-size:.84rem;font-weight:600;color:var(--ch);margin-bottom:.15rem}
-.notif-desc{font-size:.76rem;color:var(--mid);line-height:1.45}
-.notif-time{font-size:.68rem;color:var(--soft);margin-top:.3rem}
-.notif-actions{display:flex;gap:.4rem;margin-top:.5rem}
+.notif-title{font-size:.82rem;font-weight:600;color:var(--ch);margin-bottom:.12rem}
+.notif-desc{font-size:.74rem;color:var(--mid);line-height:1.45}
+.notif-time{font-size:.65rem;color:var(--soft);margin-top:.25rem}
+.notif-actions{display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap}
 
-/* Email preview modal */
-.email-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:center;justify-content:center;padding:1rem}
+/* Reminder */
+.reminder-strip{background:linear-gradient(90deg,var(--teal-d),var(--teal));border-radius:var(--r);padding:.9rem 1.1rem;margin-bottom:1rem;display:flex;align-items:flex-start;gap:.8rem;color:#fff}
+.reminder-icon{font-size:1.3rem;flex-shrink:0}
+.reminder-txt h4{font-size:.88rem;font-weight:600;margin-bottom:.15rem}
+.reminder-txt p{font-size:.75rem;opacity:.8}
+.reminder-badges{display:flex;gap:.5rem;margin-top:.5rem;flex-wrap:wrap}
+.rbadge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:.22rem .6rem;font-size:.68rem;font-weight:500}
+
+/* Auth */
+.auth-wrap{min-height:calc(100vh - 57px);display:flex;align-items:center;justify-content:center;padding:1.5rem}
+.auth-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:2rem 1.5rem;max-width:460px;width:100%;box-shadow:var(--sh-lg)}
+.auth-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:600;color:var(--ch);margin-bottom:.35rem;text-align:center}
+.auth-sub{color:var(--mid);font-size:.83rem;text-align:center;margin-bottom:1.5rem;line-height:1.5}
+.auth-tab-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.3rem}
+.auth-tab{background:var(--sand);border:1.5px solid var(--border);border-radius:9px;padding:.65rem .5rem;cursor:pointer;text-align:center;font-size:.8rem;font-weight:500;color:var(--mid);transition:all .2s;font-family:'Outfit',sans-serif}
+.auth-tab.active{background:var(--teal);border-color:var(--teal);color:#fff}
+.auth-fg{display:flex;flex-direction:column;gap:.38rem;margin-bottom:.9rem}
+.auth-fg label{font-size:.74rem;font-weight:500;color:var(--mid)}
+.auth-fg input,.auth-fg select{border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.86rem;color:var(--ch);padding:.65rem .9rem;background:var(--sand);outline:none;transition:border-color .2s;width:100%}
+.auth-fg input:focus{border-color:var(--teal);background:var(--white)}
+.btn-auth{width:100%;background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.9rem;font-weight:600;padding:.82rem;border-radius:11px;cursor:pointer;transition:all .25s;margin-top:.4rem}
+.btn-auth:hover,.btn-auth:active{background:var(--teal-d)}
+.auth-switch{text-align:center;font-size:.76rem;color:var(--mid);margin-top:.9rem}
+.auth-switch a{color:var(--teal);cursor:pointer;font-weight:500}
+
+/* Email modal */
+.email-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;align-items:flex-end;justify-content:center;padding:0}
 .email-modal.open{display:flex}
-.email-box{background:#fff;border-radius:var(--r-lg);max-width:560px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.3);animation:slideUp .3s ease;overflow:hidden}
-.email-header{background:var(--teal-d);padding:1.2rem 1.5rem;color:#fff;display:flex;justify-content:space-between;align-items:center}
-.email-header h3{font-family:'Playfair Display',serif;font-size:1.05rem}
-.email-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer}
-.email-meta{padding:1rem 1.5rem;border-bottom:1px solid var(--border);font-size:.78rem;color:var(--mid)}
-.email-meta div{margin-bottom:.3rem}
+.email-box{background:#fff;border-radius:var(--r-lg) var(--r-lg) 0 0;max-width:100%;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.3);animation:slideUp .3s ease}
+@media(min-width:600px){
+  .email-modal{align-items:center;padding:1rem}
+  .email-box{border-radius:var(--r-lg);max-width:560px}
+}
+.email-header{background:var(--teal-d);padding:1rem 1.2rem;color:#fff;display:flex;justify-content:space-between;align-items:center}
+.email-header h3{font-family:'Playfair Display',serif;font-size:1rem}
+.email-close{background:none;border:none;color:rgba(255,255,255,.7);font-size:1.2rem;cursor:pointer;padding:.2rem .5rem}
+.email-meta{padding:.9rem 1.2rem;border-bottom:1px solid var(--border);font-size:.76rem;color:var(--mid)}
+.email-meta div{margin-bottom:.28rem}
 .email-meta strong{color:var(--ch)}
-.email-body{padding:1.5rem;font-size:.85rem;line-height:1.65;color:var(--ch)}
-.email-body .email-hi{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom.5rem;color:var(--teal-d)}
-.email-details-box{background:var(--sand);border-radius:10px;padding:1rem;margin:1rem 0;font-size:.82rem}
-.email-details-box div{margin-bottom:.4rem;display:flex;gap:.5rem}
+.email-body{padding:1.2rem;font-size:.83rem;line-height:1.65;color:var(--ch)}
+.email-hi{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--teal-d);display:block;margin-bottom:.6rem}
+.email-details-box{background:var(--sand);border-radius:10px;padding:.9rem;margin:.9rem 0;font-size:.8rem}
+.email-details-box div{margin-bottom:.35rem;display:flex;gap:.5rem}
 .email-details-box span:first-child{color:var(--soft);width:80px;flex-shrink:0}
 .email-details-box span:last-child{font-weight:500;color:var(--ch)}
-.email-link-btn{display:inline-block;background:var(--teal);color:#fff;text-decoration:none;padding:.65rem 1.4rem;border-radius:8px;font-weight:600;font-size:.85rem;margin:1rem 0}
-.email-footer-txt{font-size:.73rem;color:var(--soft);margin-top:1rem;line-height:1.5}
+.email-link-btn{display:inline-block;background:var(--teal);color:#fff;text-decoration:none;padding:.6rem 1.2rem;border-radius:8px;font-weight:600;font-size:.83rem;margin:.8rem 0;cursor:pointer;border:none;font-family:'Outfit',sans-serif}
+.email-footer-txt{font-size:.7rem;color:var(--soft);margin-top:.9rem;line-height:1.5}
 
 /* Toast */
-.toast{position:fixed;bottom:1.5rem;right:1.5rem;z-index:1000;background:var(--ch);color:#fff;padding:.8rem 1.3rem;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:var(--sh-lg);transform:translateY(80px);opacity:0;transition:all .35s;max-width:320px;display:flex;align-items:center;gap:.6rem}
-.toast.show{transform:translateY(0);opacity:1}
+.toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%) translateY(80px);z-index:1000;background:var(--ch);color:#fff;padding:.75rem 1.2rem;border-radius:10px;font-size:.82rem;font-weight:500;box-shadow:var(--sh-lg);opacity:0;transition:all .35s;max-width:90vw;text-align:center;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 .toast.success{background:var(--green)}
 .toast.info{background:var(--blue)}
 
-/* Reminder badges */
-.reminder-strip{background:linear-gradient(90deg,var(--teal-d),var(--teal));border-radius:var(--r);padding:1rem 1.3rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:1rem;color:#fff}
-.reminder-icon{font-size:1.4rem}
-.reminder-txt h4{font-size:.9rem;font-weight:600;margin-bottom:.2rem}
-.reminder-txt p{font-size:.77rem;opacity:.8}
-.reminder-badges{display:flex;gap:.6rem;margin-top:.6rem;flex-wrap:wrap}
-.rbadge{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:.25rem .65rem;font-size:.7rem;font-weight:500}
-
-/* Auth screen */
-.auth-wrap{min-height:calc(100vh - 57px);display:flex;align-items:center;justify-content:center;padding:2rem}
-.auth-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:2.5rem;max-width:480px;width:100%;box-shadow:var(--sh-lg)}
-.auth-title{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:var(--ch);margin-bottom:.4rem;text-align:center}
-.auth-sub{color:var(--mid);font-size:.85rem;text-align:center;margin-bottom:2rem;line-height:1.5}
-.auth-tab-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1.5rem}
-.auth-tab{background:var(--sand);border:1.5px solid var(--border);border-radius:9px;padding:.7rem;cursor:pointer;text-align:center;font-size:.82rem;font-weight:500;color:var(--mid);transition:all .2s;font-family:'Outfit',sans-serif}
-.auth-tab:hover{border-color:var(--teal);color:var(--teal)}
-.auth-tab.active{background:var(--teal);border-color:var(--teal);color:#fff}
-.auth-fg{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
-.auth-fg label{font-size:.76rem;font-weight:500;color:var(--mid)}
-.auth-fg input,.auth-fg select{border:1.5px solid var(--border);border-radius:9px;font-family:'Outfit',sans-serif;font-size:.86rem;color:var(--ch);padding:.65rem .9rem;background:var(--sand);outline:none;transition:border-color .2s;width:100%}
-.auth-fg input:focus,.auth-fg select:focus{border-color:var(--teal);background:var(--white)}
-.btn-auth{width:100%;background:var(--teal);color:#fff;border:none;font-family:'Outfit',sans-serif;font-size:.92rem;font-weight:600;padding:.85rem;border-radius:11px;cursor:pointer;transition:all .25s;margin-top:.5rem}
-.btn-auth:hover{background:var(--teal-d)}
-.auth-switch{text-align:center;font-size:.78rem;color:var(--mid);margin-top:1rem}
-.auth-switch a{color:var(--teal);cursor:pointer;text-decoration:none;font-weight:500}
-
-/* Responsive */
-@media(max-width:768px){
-  .pro-layout{grid-template-columns:1fr}
-  .pro-sidebar{position:static}
-  .stats-row{grid-template-columns:1fr 1fr}
-  nav .nav-center{display:none}
-}
-@media(max-width:480px){
-  .stats-row{grid-template-columns:1fr}
-  .rdv-item{grid-template-columns:auto 1fr}
-  .week-grid{grid-template-columns:40px repeat(5,1fr)}
-}
+/* Btn utilities */
+.btn-sm-inline{font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;padding:.38rem .85rem;border-radius:7px;cursor:pointer;transition:all .2s;border:1.5px solid var(--teal);color:var(--teal);background:none}
+.btn-sm-inline:hover{background:var(--teal);color:#fff}
 </style>
 </head>
 <body>
@@ -394,28 +455,64 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
 <!-- NAV -->
 <nav id="main-nav">
   <span class="logo" onclick="showView('home')">Psycho<span>lab</span></span>
-  <div class="nav-center">
-    <button class="nav-tab active" onclick="showView('home')">🔍 Trouver un spécialiste</button>
-    <button class="nav-tab" id="pro-tab" onclick="showView('pro-dashboard')" style="display:none">📊 Mon Espace Pro</button>
+  <!-- Desktop lang -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('fr')">FR</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('ar')">AR</button>
   </div>
-  <div class="nav-right">
-    <button class="lang-btn active" onclick="/* lang switch placeholder */">FR</button>
-    <button class="lang-btn" onclick="">EN</button>
-    <button class="lang-btn" onclick="">AR</button>
-    <button class="notif-bell" id="notif-bell-btn" onclick="/* notifs */" style="display:none">🔔<span class="notif-dot"></span></button>
+  <!-- Desktop right buttons -->
+  <div class="nav-desktop-right">
     <button class="btn-sm btn-outline" id="nav-login-btn" onclick="showView('auth')">Connexion</button>
     <button class="btn-sm btn-solid" id="nav-signup-btn" onclick="showView('auth')">Inscription</button>
     <button class="btn-sm btn-solid" id="nav-logout-btn" style="display:none" onclick="logout()">Déconnexion</button>
   </div>
+  <!-- Mobile hamburger -->
+  <button class="hamburger" onclick="openMobileMenu()">☰ Menu<span class="ham-notif" id="ham-dot" style="display:none"></span></button>
 </nav>
 
-<!-- ══════════════════════ VIEW: HOME ══════════════════════ -->
+<!-- MOBILE MENU DRAWER -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mm-overlay" onclick="closeMobileMenu()"></div>
+  <div class="mm-drawer">
+    <button class="mm-close" onclick="closeMobileMenu()">✕ Fermer</button>
+
+    <div>
+      <p class="mm-section-title">Navigation</p>
+      <button class="mm-btn mm-btn-nav active" id="mm-home-btn" onclick="showView('home');closeMobileMenu()">🔍 Trouver un spécialiste</button>
+      <button class="mm-btn mm-btn-nav" id="mm-pro-btn" style="display:none" onclick="showView('pro-dashboard');closeMobileMenu()">📊 Mon Espace Pro</button>
+    </div>
+
+    <div class="mm-divider"></div>
+
+    <div>
+      <p class="mm-section-title">Langue</p>
+      <div class="mm-lang-row">
+        <button class="mm-lang active" id="ml-fr" onclick="setLang('fr')">FR</button>
+        <button class="mm-lang" id="ml-en" onclick="setLang('en')">EN</button>
+        <button class="mm-lang" id="ml-ar" onclick="setLang('ar')">AR</button>
+      </div>
+    </div>
+
+    <div class="mm-divider"></div>
+
+    <div id="mm-auth-section">
+      <p class="mm-section-title">Mon compte</p>
+      <button class="mm-btn mm-btn-outline" onclick="showView('auth');closeMobileMenu()">Connexion</button>
+      <button class="mm-btn mm-btn-solid" style="margin-top:.5rem" onclick="showView('auth');closeMobileMenu()">Inscription</button>
+    </div>
+    <div id="mm-logout-section" style="display:none">
+      <button class="mm-btn mm-btn-outline" onclick="logout();closeMobileMenu()">Déconnexion</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VIEW: HOME ══ -->
 <div class="view active" id="view-home">
-  <!-- Hero -->
   <div class="hero">
     <div class="hero-badge">✦ Plateforme certifiée · Sécurisée · RGPD</div>
     <h1>Votre santé mentale,<br/><em>prise en charge</em> par des experts</h1>
-    <p>Psychiatres, psychologues, psychomotriciens, ergothérapeutes et orthophonistes — consultations sécurisées en ligne ou en présentiel, partout dans le monde.</p>
+    <p>Psychiatres, psychologues, psychomotriciens, ergothérapeutes et orthophonistes — consultations sécurisées en ligne ou en présentiel.</p>
     <div class="trust-row">
       <div class="trust-item"><div class="trust-icon">🔒</div>Chiffrement E2E</div>
       <div class="trust-item"><div class="trust-icon">🩺</div>Pros certifiés</div>
@@ -424,31 +521,31 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
     </div>
   </div>
 
-  <!-- Search -->
   <div class="search-block">
     <div class="search-box">
       <div class="si-wrap">
         <span>🔍</span>
         <input type="text" id="home-search" placeholder="Nom, spécialité, problématique…" oninput="filterSpecs()"/>
       </div>
-      <select class="fsel" id="home-filter-spec" onchange="filterSpecs()">
-        <option value="">Toutes spécialités</option>
-        <option value="Psychiatre">Psychiatre</option>
-        <option value="Psychologue">Psychologue clinicien</option>
-        <option value="Psychomotricien">Psychomotricien</option>
-        <option value="Ergothérapeute">Ergothérapeute</option>
-        <option value="Orthophoniste">Orthophoniste</option>
-      </select>
-      <select class="fsel" id="home-filter-type" onchange="filterSpecs()">
-        <option value="">Tout type</option>
-        <option value="video">📹 Vidéo</option>
-        <option value="presentiel">🏥 Présentiel</option>
-      </select>
-      <button class="btn-srch" onclick="filterSpecs()">Rechercher</button>
+      <div class="search-filters">
+        <select class="fsel" id="home-filter-spec" onchange="filterSpecs()">
+          <option value="">Toutes spécialités</option>
+          <option value="Psychiatre">Psychiatre</option>
+          <option value="Psychologue">Psychologue</option>
+          <option value="Psychomotricien">Psychomotricien</option>
+          <option value="Ergothérapeute">Ergothérapeute</option>
+          <option value="Orthophoniste">Orthophoniste</option>
+        </select>
+        <select class="fsel" id="home-filter-type" onchange="filterSpecs()">
+          <option value="">Tout type</option>
+          <option value="video">📹 Vidéo</option>
+          <option value="presentiel">🏥 Présentiel</option>
+        </select>
+        <button class="btn-srch" onclick="filterSpecs()">Rechercher</button>
+      </div>
     </div>
   </div>
 
-  <!-- Results -->
   <div class="section">
     <div class="section-head">
       <h2 class="section-title">Spécialistes disponibles</h2>
@@ -458,55 +555,43 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
   </div>
 </div>
 
-<!-- ══════════════════════ VIEW: AUTH ══════════════════════ -->
+<!-- ══ VIEW: AUTH ══ -->
 <div class="view" id="view-auth">
   <div class="auth-wrap">
     <div class="auth-card">
-      <div style="text-align:center;font-size:2rem;margin-bottom:.8rem">🧠</div>
+      <div style="text-align:center;font-size:2rem;margin-bottom:.6rem">🧠</div>
       <h2 class="auth-title">Psycholab</h2>
       <p class="auth-sub">Accédez à votre espace personnel ou professionnel</p>
       <div class="auth-tab-row">
-        <div class="auth-tab active" id="tab-patient" onclick="switchAuthTab('patient')">👤 Patient / Particulier</div>
-        <div class="auth-tab" id="tab-pro" onclick="switchAuthTab('pro')">🩺 Professionnel de santé</div>
+        <div class="auth-tab active" id="tab-patient" onclick="switchAuthTab('patient')">👤 Patient</div>
+        <div class="auth-tab" id="tab-pro" onclick="switchAuthTab('pro')">🩺 Professionnel</div>
       </div>
-
-      <!-- Patient login -->
       <div id="auth-patient">
         <div class="auth-fg"><label>Email</label><input type="email" id="p-email" placeholder="votre@email.com"/></div>
         <div class="auth-fg"><label>Mot de passe</label><input type="password" id="p-pwd" placeholder="••••••••"/></div>
         <button class="btn-auth" onclick="loginPatient()">Se connecter</button>
-        <p class="auth-switch">Pas encore de compte ? <a onclick="/* signup */">S'inscrire gratuitement</a></p>
-        <p style="text-align:center;font-size:.72rem;color:var(--soft);margin-top:.5rem">
-          💡 <strong>Demo patient :</strong> tout email + tout mdp
-        </p>
+        <p class="auth-switch">Pas encore de compte ? <a>S'inscrire gratuitement</a></p>
+        <p style="text-align:center;font-size:.7rem;color:var(--soft);margin-top:.5rem">💡 Demo : tout email + tout mot de passe</p>
       </div>
-
-      <!-- Pro login -->
       <div id="auth-pro" style="display:none">
-        <div style="background:var(--teal-xl);border-radius:9px;padding:.8rem;margin-bottom:1rem;font-size:.78rem;color:var(--teal-d)">
-          🩺 Réservé aux <strong>psychiatres, psychologues, psychomotriciens, ergothérapeutes et orthophonistes</strong> agréés.
-        </div>
+        <div style="background:var(--teal-xl);border-radius:9px;padding:.75rem;margin-bottom:.9rem;font-size:.76rem;color:var(--teal-d)">🩺 Réservé aux professionnels de santé mentale agréés.</div>
         <div class="auth-fg"><label>Email professionnel</label><input type="email" id="pro-email" placeholder="dr.nom@institution.fr"/></div>
         <div class="auth-fg"><label>Mot de passe</label><input type="password" id="pro-pwd" placeholder="••••••••"/></div>
         <button class="btn-auth" onclick="loginPro()">Accéder à mon espace</button>
-        <p class="auth-switch">Pas encore inscrit ? <a onclick="/* signup pro */">Créer un compte professionnel</a></p>
-        <p style="text-align:center;font-size:.72rem;color:var(--soft);margin-top:.5rem">
-          💡 <strong>Demo pro :</strong> tout email + tout mdp
-        </p>
+        <p class="auth-switch">Pas encore inscrit ? <a>Créer un compte professionnel</a></p>
+        <p style="text-align:center;font-size:.7rem;color:var(--soft);margin-top:.5rem">💡 Demo : tout email + tout mot de passe</p>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════ VIEW: PRO DASHBOARD ══════════════════════ -->
+<!-- ══ VIEW: PRO DASHBOARD ══ -->
 <div class="view" id="view-pro-dashboard">
   <div class="pro-layout">
-
-    <!-- Sidebar -->
     <aside class="pro-sidebar">
       <div class="pro-profile">
         <div class="pro-avatar">👩‍⚕️</div>
-        <p class="pro-name" id="pro-display-name">Dr. Leila Mansouri</p>
+        <p class="pro-name">Dr. Leila Mansouri</p>
         <p class="pro-spec">Psychiatre</p>
         <div class="pro-status">En ligne</div>
       </div>
@@ -521,42 +606,22 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
       </nav>
     </aside>
 
-    <!-- Main -->
     <div class="pro-main">
-
       <!-- Overview -->
       <div class="dash-section active" id="dash-overview">
-        <div style="margin-bottom:1.2rem">
-          <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600;color:var(--ch);margin-bottom:.2rem">Bonjour, Dr. Mansouri 👋</h2>
-          <p style="color:var(--soft);font-size:.85rem">Voici votre tableau de bord — Vendredi 23 Mai 2026</p>
+        <div style="margin-bottom:1rem">
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:600;color:var(--ch);margin-bottom:.2rem">Bonjour, Dr. Mansouri 👋</h2>
+          <p style="color:var(--soft);font-size:.82rem">Tableau de bord — Vendredi 23 Mai 2026</p>
         </div>
         <div class="stats-row">
-          <div class="stat-card">
-            <div class="stat-val">3</div>
-            <div class="stat-lbl">RDV en attente</div>
-            <div class="stat-trend up">↑ +2 aujourd'hui</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val">12</div>
-            <div class="stat-lbl">RDV ce mois</div>
-            <div class="stat-trend up">↑ +4 vs mois dernier</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val">4.9</div>
-            <div class="stat-lbl">Note moyenne</div>
-            <div class="stat-trend neutral">⭐ 87 avis</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-val">94%</div>
-            <div class="stat-lbl">Taux confirmation</div>
-            <div class="stat-trend up">↑ Excellent</div>
-          </div>
+          <div class="stat-card"><div class="stat-val">3</div><div class="stat-lbl">RDV en attente</div><div class="stat-trend up">↑ +2 aujourd'hui</div></div>
+          <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">RDV ce mois</div><div class="stat-trend up">↑ +4 vs mois dernier</div></div>
+          <div class="stat-card"><div class="stat-val">4.9</div><div class="stat-lbl">Note moyenne</div><div class="stat-trend neutral">⭐ 87 avis</div></div>
+          <div class="stat-card"><div class="stat-val">94%</div><div class="stat-lbl">Taux confirmation</div><div class="stat-trend up">↑ Excellent</div></div>
         </div>
-
-        <!-- Pending RDVs quick view -->
-        <div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch)">⏳ Demandes en attente</h3>
-          <button class="ftab active" onclick="showDash('rdvs')" style="font-size:.75rem">Voir tout →</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--ch)">⏳ Demandes en attente</h3>
+          <button class="ftab active" onclick="showDash('rdvs')">Voir tout →</button>
         </div>
         <div class="rdv-list" id="overview-rdv-list"></div>
       </div>
@@ -577,39 +642,38 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
 
       <!-- Agenda -->
       <div class="dash-section" id="dash-agenda">
-        <div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ch)">Mon Agenda — Semaine</h3>
-          <div style="display:flex;gap:.5rem">
-            <span style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:var(--soft)"><span style="width:10px;height:10px;background:#C6F6D5;border-radius:2px;display:inline-block;border-left:3px solid var(--green)"></span>Confirmé</span>
-            <span style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:var(--soft)"><span style="width:10px;height:10px;background:#FEEBC8;border-radius:2px;display:inline-block;border-left:3px solid var(--orange)"></span>En attente</span>
-            <span style="display:flex;align-items:center;gap:.3rem;font-size:.72rem;color:var(--soft)"><span style="width:10px;height:10px;background:#BEE3F8;border-radius:2px;display:inline-block;border-left:3px solid var(--blue)"></span>Vidéo</span>
+        <div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch)">Mon Agenda — Semaine</h3>
+          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--soft)"><span style="width:10px;height:10px;background:#C6F6D5;border-radius:2px;display:inline-block;border-left:3px solid var(--green)"></span>Confirmé</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--soft)"><span style="width:10px;height:10px;background:#FEEBC8;border-radius:2px;display:inline-block;border-left:3px solid var(--orange)"></span>En attente</span>
+            <span style="display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--soft)"><span style="width:10px;height:10px;background:#BEE3F8;border-radius:2px;display:inline-block;border-left:3px solid var(--blue)"></span>Vidéo</span>
           </div>
         </div>
         <div class="week-cal" id="week-cal"></div>
-        <div style="margin-top:1rem;background:var(--teal-xl);border-radius:10px;padding:.9rem 1.2rem;font-size:.8rem;color:var(--teal-d);display:flex;align-items:center;gap:.6rem">
-          <span>📅</span>
-          <span>Votre agenda est <strong>synchronisé automatiquement</strong> avec Google Calendar à l'adresse associée à votre inscription. Chaque nouveau RDV confirmé y apparaît en temps réel.</span>
+        <div style="margin-top:.9rem;background:var(--teal-xl);border-radius:10px;padding:.85rem 1.1rem;font-size:.78rem;color:var(--teal-d);display:flex;align-items:flex-start;gap:.5rem">
+          <span>📅</span><span>Votre agenda est <strong>synchronisé automatiquement</strong> avec Google Calendar à l'adresse associée à votre compte. Chaque RDV confirmé y apparaît en temps réel.</span>
         </div>
       </div>
 
       <!-- Availability -->
       <div class="dash-section" id="dash-availability">
-        <div style="margin-bottom:1.2rem">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ch);margin-bottom:.3rem">Gérer mes disponibilités</h3>
-          <p style="color:var(--soft);font-size:.82rem">Définissez vos jours et créneaux ouverts aux consultations.</p>
+        <div style="margin-bottom:1rem">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch);margin-bottom:.25rem">Gérer mes disponibilités</h3>
+          <p style="color:var(--soft);font-size:.8rem">Activez vos jours et sélectionnez vos créneaux horaires.</p>
         </div>
         <div class="avail-grid" id="avail-grid"></div>
-        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1.2rem;margin-top:.5rem">
-          <h4 style="font-size:.9rem;font-weight:600;color:var(--ch);margin-bottom:1rem">⏰ Créneaux horaires — Lundi</h4>
-          <div style="display:flex;flex-wrap:wrap;gap:.5rem" id="avail-slots-grid"></div>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;margin-top:.5rem">
+          <h4 style="font-size:.86rem;font-weight:600;color:var(--ch);margin-bottom:.8rem">⏰ Créneaux — Lundi</h4>
+          <div style="display:flex;flex-wrap:wrap;gap:.4rem" id="avail-slots-grid"></div>
         </div>
-        <button class="btn-confirm" style="margin-top:1rem;max-width:220px" onclick="showToast('✅ Disponibilités sauvegardées et synchronisées','success')">Sauvegarder</button>
+        <button class="btn-confirm" style="margin-top:1rem;max-width:200px" onclick="showToast('✅ Disponibilités sauvegardées','success')">Sauvegarder</button>
       </div>
 
       <!-- Notifications -->
       <div class="dash-section" id="dash-notifications">
-        <div style="margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between">
-          <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ch)">Notifications</h3>
+        <div style="margin-bottom:.9rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch)">Notifications</h3>
           <button class="ftab" onclick="markAllRead()">Tout marquer lu</button>
         </div>
         <div class="notif-list" id="notif-list"></div>
@@ -617,12 +681,12 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
 
       <!-- Reminders -->
       <div class="dash-section" id="dash-reminders">
-        <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ch);margin-bottom:1rem">Système de rappels automatiques</h3>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch);margin-bottom:.9rem">Système de rappels automatiques</h3>
         <div class="reminder-strip">
           <div class="reminder-icon">📧</div>
           <div class="reminder-txt">
-            <h4>Rappels email automatiques activés</h4>
-            <p>Les patients reçoivent des rappels aux horaires configurés ci-dessous</p>
+            <h4>Rappels email activés</h4>
+            <p>Les patients reçoivent des rappels automatiques</p>
             <div class="reminder-badges">
               <span class="rbadge">⏰ 24h avant</span>
               <span class="rbadge">⏰ 2h avant</span>
@@ -630,53 +694,40 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
             </div>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:.8rem" id="reminder-log"></div>
-        <div style="margin-top:1.2rem">
-          <h4 style="font-size:.9rem;font-weight:600;color:var(--ch);margin-bottom:.8rem">Prévisualiser un email de rappel</h4>
-          <div style="display:flex;gap:.6rem;flex-wrap:wrap">
-            <button class="btn-sm btn-outline" onclick="previewEmail('confirm')">📧 Confirmation patient</button>
-            <button class="btn-sm btn-outline" onclick="previewEmail('remind24')">⏰ Rappel 24h</button>
-            <button class="btn-sm btn-outline" onclick="previewEmail('remind2')">⏰ Rappel 2h</button>
-            <button class="btn-sm btn-outline" onclick="previewEmail('pro_notify')">🩺 Notif nouveau RDV (Pro)</button>
+        <div style="display:flex;flex-direction:column;gap:.7rem" id="reminder-log"></div>
+        <div style="margin-top:1rem">
+          <h4 style="font-size:.86rem;font-weight:600;color:var(--ch);margin-bottom:.7rem">Prévisualiser un email</h4>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn-sm-inline" onclick="previewEmail('confirm')">📧 Confirmation patient</button>
+            <button class="btn-sm-inline" onclick="previewEmail('remind24')">⏰ Rappel 24h</button>
+            <button class="btn-sm-inline" onclick="previewEmail('remind2')">⏰ Rappel 2h</button>
+            <button class="btn-sm-inline" onclick="previewEmail('pro_notify')">🩺 Notif nouveau RDV</button>
           </div>
         </div>
       </div>
 
       <!-- Profile -->
       <div class="dash-section" id="dash-profile">
-        <h3 style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ch);margin-bottom:1.2rem">Mon profil professionnel</h3>
-        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.5rem">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--ch);margin-bottom:1rem">Mon profil professionnel</h3>
+        <div style="background:var(--white);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1.3rem">
           <div class="form-grid">
             <div class="fg"><label>Prénom</label><input value="Leila"/></div>
             <div class="fg"><label>Nom</label><input value="Mansouri"/></div>
-            <div class="fg"><label>Spécialité</label>
-              <select>
-                <option selected>Psychiatre</option>
-                <option>Psychologue clinicien</option>
-                <option>Psychomotricien</option>
-                <option>Ergothérapeute</option>
-                <option>Orthophoniste</option>
-              </select>
-            </div>
+            <div class="fg"><label>Spécialité</label><select><option selected>Psychiatre</option><option>Psychologue clinicien</option><option>Psychomotricien</option><option>Ergothérapeute</option><option>Orthophoniste</option></select></div>
             <div class="fg"><label>Tarif (€/séance)</label><input value="85"/></div>
-            <div class="fg full"><label>Biographie</label><textarea>Psychiatre spécialisée en TCC, thérapie des schémas et gestion de l'anxiété. Plus de 10 ans d'expérience clinique.</textarea></div>
-            <div class="fg"><label>Email (agenda Google)</label><input value="l.mansouri@psycholab.fr" type="email"/></div>
-            <div class="fg"><label>Fuseau horaire</label>
-              <select><option>Africa/Tunis (UTC+1)</option><option>Europe/Paris (UTC+2)</option></select>
-            </div>
+            <div class="fg full"><label>Biographie</label><textarea>Psychiatre spécialisée en TCC et gestion de l'anxiété. Plus de 10 ans d'expérience clinique.</textarea></div>
+            <div class="fg"><label>Email (Google Calendar)</label><input value="l.mansouri@psycholab.fr" type="email"/></div>
+            <div class="fg"><label>Fuseau horaire</label><select><option>Africa/Tunis (UTC+1)</option><option>Europe/Paris (UTC+2)</option></select></div>
           </div>
-          <div style="margin-top:.5rem;background:var(--teal-xl);border-radius:9px;padding:.8rem 1rem;font-size:.78rem;color:var(--teal-d);display:flex;align-items:center;gap:.6rem">
-            📅 <span>Les RDV confirmés seront automatiquement ajoutés à votre <strong>Google Calendar</strong> lié à cet email.</span>
-          </div>
-          <button class="btn-confirm" style="margin-top:1.2rem;max-width:220px" onclick="showToast('✅ Profil mis à jour','success')">Sauvegarder</button>
+          <div style="margin-top:.5rem;background:var(--teal-xl);border-radius:9px;padding:.75rem .9rem;font-size:.76rem;color:var(--teal-d);display:flex;align-items:flex-start;gap:.5rem">📅 <span>Les RDV confirmés sont automatiquement ajoutés à votre <strong>Google Calendar</strong> lié à cet email.</span></div>
+          <button class="btn-confirm" style="margin-top:1rem;max-width:200px" onclick="showToast('✅ Profil mis à jour','success')">Sauvegarder</button>
         </div>
       </div>
-
-    </div><!-- /pro-main -->
-  </div><!-- /pro-layout -->
+    </div>
+  </div>
 </div>
 
-<!-- ══════════════════════ BOOKING MODAL ══════════════════════ -->
+<!-- BOOKING MODAL -->
 <div class="modal-overlay" id="booking-modal">
   <div class="modal">
     <div class="modal-header">
@@ -684,18 +735,17 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="modal-body">
-      <!-- Stepper -->
       <div class="m-stepper">
         <div class="m-step active" id="ms-1"><div class="m-dot">1</div><span class="m-label">Créneau</span><div class="m-line"></div></div>
         <div class="m-step" id="ms-2"><div class="m-dot">2</div><span class="m-label">Informations</span><div class="m-line"></div></div>
-        <div class="m-step" id="ms-3"><div class="m-dot">✓</div><span class="m-label">Confirmation</span></div>
+        <div class="m-step" id="ms-3"><div class="m-dot">✓</div><span class="m-label">Confirmé</span></div>
       </div>
 
-      <!-- Step 1: Calendar + type -->
+      <!-- Step 1 -->
       <div class="m-panel active" id="mp-1">
         <div class="book-layout">
-          <div>
-            <div class="cal-card" style="margin-bottom:1rem">
+          <div style="flex:1">
+            <div class="cal-card" style="margin-bottom:.9rem">
               <div class="cal-nav">
                 <button onclick="prevMo()">‹</button>
                 <span class="cal-month-lbl" id="m-cal-month"></span>
@@ -707,19 +757,11 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
                 <div class="slots-grid" id="m-slots-grid"></div>
               </div>
             </div>
-            <div style="background:var(--sand);border:1.5px solid var(--border);border-radius:10px;padding:1rem">
-              <p style="font-size:.78rem;font-weight:600;color:var(--mid);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.05em">Type de consultation</p>
+            <div style="background:var(--sand);border:1.5px solid var(--border);border-radius:10px;padding:.9rem">
+              <p style="font-size:.74rem;font-weight:600;color:var(--mid);margin-bottom:.55rem;text-transform:uppercase;letter-spacing:.05em">Type de consultation</p>
               <div class="type-row">
-                <div class="type-card sel" id="tc-video" onclick="selType('video')">
-                  <div class="type-icon">📹</div>
-                  <div class="type-lbl">Vidéo sécurisée</div>
-                  <div class="type-sub">Chiffrement de bout en bout</div>
-                </div>
-                <div class="type-card" id="tc-pres" onclick="selType('presentiel')">
-                  <div class="type-icon">🏥</div>
-                  <div class="type-lbl">En présentiel</div>
-                  <div class="type-sub">Au cabinet</div>
-                </div>
+                <div class="type-card sel" id="tc-video" onclick="selType('video')"><div class="type-icon">📹</div><div class="type-lbl">Vidéo sécurisée</div><div class="type-sub">Chiffrement E2E</div></div>
+                <div class="type-card" id="tc-pres" onclick="selType('presentiel')"><div class="type-icon">🏥</div><div class="type-lbl">En présentiel</div><div class="type-sub">Au cabinet</div></div>
               </div>
             </div>
           </div>
@@ -737,29 +779,21 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
         </div>
       </div>
 
-      <!-- Step 2: Patient info -->
+      <!-- Step 2 -->
       <div class="m-panel" id="mp-2">
         <div class="book-layout">
-          <div>
+          <div style="flex:1">
             <div class="form-grid">
               <div class="fg"><label>Prénom *</label><input id="b-fn" placeholder="Votre prénom"/></div>
               <div class="fg"><label>Nom *</label><input id="b-ln" placeholder="Votre nom"/></div>
               <div class="fg"><label>Email *</label><input id="b-email" type="email" placeholder="votre@email.com"/></div>
               <div class="fg"><label>Téléphone</label><input id="b-phone" type="tel" placeholder="+33 6 00 00 00 00"/></div>
-              <div class="fg"><label>Fuseau horaire</label>
-                <select id="b-tz">
-                  <option>Europe/Paris (UTC+2)</option>
-                  <option>Africa/Tunis (UTC+1)</option>
-                  <option>Africa/Casablanca (UTC+1)</option>
-                  <option>America/Montreal (UTC-4)</option>
-                  <option>Asia/Dubai (UTC+4)</option>
-                </select>
-              </div>
+              <div class="fg"><label>Fuseau horaire</label><select id="b-tz"><option>Europe/Paris (UTC+2)</option><option>Africa/Tunis (UTC+1)</option><option>Africa/Casablanca (UTC+1)</option><option>America/Montreal (UTC-4)</option><option>Asia/Dubai (UTC+4)</option></select></div>
               <div class="fg"><label>Âge</label><input id="b-age" type="number" placeholder="Ex: 32"/></div>
               <div class="fg full"><label>Motif de consultation</label><textarea id="b-motive" placeholder="Décrivez brièvement votre demande…"></textarea></div>
             </div>
             <div class="cb-row"><input type="checkbox" id="cb1"/><div class="cb-txt">J'accepte que mes données soient partagées <strong>confidentiellement</strong> avec le praticien, conformément au <strong>RGPD</strong>.</div></div>
-            <div class="cb-row"><input type="checkbox" id="cb2" checked/><div class="cb-txt">Je souhaite recevoir une <strong>confirmation email</strong> + rappels automatiques (24h et 2h avant) + synchronisation avec mon agenda.</div></div>
+            <div class="cb-row"><input type="checkbox" id="cb2" checked/><div class="cb-txt">Je souhaite recevoir une <strong>confirmation email</strong> + rappels automatiques (24h et 2h avant) + synchronisation agenda.</div></div>
           </div>
           <div class="sum-card">
             <h4>Récapitulatif</h4>
@@ -772,17 +806,15 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
             <div class="secure-note">🔒 SSL · Confidentiel</div>
           </div>
         </div>
-        <div style="margin-top:1rem;display:flex;gap:.6rem">
-          <button class="btn-sm btn-outline" onclick="modalStep(1)">← Retour</button>
-        </div>
+        <div style="margin-top:1rem"><button class="btn-sm-inline" onclick="modalStep(1)">← Retour</button></div>
       </div>
 
-      <!-- Step 3: Confirmation -->
+      <!-- Step 3 -->
       <div class="m-panel" id="mp-3">
         <div class="conf-wrap">
           <div class="conf-icon">✓</div>
-          <h2 class="conf-title">Rendez-vous confirmé !</h2>
-          <p class="conf-sub">Votre demande a été transmise au praticien. Vous recevrez une confirmation par email dès validation, ainsi qu'un lien de synchronisation agenda.</p>
+          <h2 class="conf-title">RDV confirmé !</h2>
+          <p class="conf-sub">Votre demande a été transmise. Vous recevrez un email de confirmation avec le lien vidéo sécurisé et la synchronisation de votre agenda.</p>
           <div class="notif-badges">
             <div class="nbadge">📧 Email envoyé</div>
             <div class="nbadge">📅 Agenda synchronisé</div>
@@ -795,11 +827,11 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
             <div class="conf-row"><div class="conf-ico">🎓</div><div><p class="conf-k">Spécialité</p><p class="conf-v" id="cv-spe">—</p></div></div>
             <div class="conf-row"><div class="conf-ico">📅</div><div><p class="conf-k">Date & Heure</p><p class="conf-v" id="cv-date">—</p></div></div>
             <div class="conf-row"><div class="conf-ico">💻</div><div><p class="conf-k">Type</p><p class="conf-v" id="cv-type">—</p></div></div>
-            <div class="conf-row"><div class="conf-ico">🔗</div><div><p class="conf-k">Lien vidéo</p><p class="conf-v"><a href="#" style="color:var(--teal);font-size:.8rem">psycholab.video/session/secure-a7f3</a></p></div></div>
+            <div class="conf-row"><div class="conf-ico">🔗</div><div><p class="conf-k">Lien vidéo</p><p class="conf-v"><a href="#" style="color:var(--teal);font-size:.78rem">psycholab.video/session/secure-a7f3</a></p></div></div>
             <div class="conf-row"><div class="conf-ico">⏰</div><div><p class="conf-k">Rappels</p><p class="conf-v">Email 24h avant + Email 2h avant</p></div></div>
           </div>
           <div class="conf-actions">
-            <button class="btn-act-p" onclick="addCal()">📅 Ajouter à l'agenda</button>
+            <button class="btn-act-p" onclick="showToast('📅 Fichier .ics généré','success')">📅 Ajouter à l'agenda</button>
             <button class="btn-act-p" onclick="previewEmail('confirm')">📧 Voir l'email</button>
             <button class="btn-act-s" onclick="closeModal()">Fermer</button>
           </div>
@@ -809,7 +841,7 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
   </div>
 </div>
 
-<!-- EMAIL PREVIEW MODAL -->
+<!-- EMAIL MODAL -->
 <div class="email-modal" id="email-modal">
   <div class="email-box">
     <div class="email-header">
@@ -821,125 +853,116 @@ input:checked+.toggle-sl::before{transform:translateX(16px)}
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════
 // DATA
-// ═══════════════════════════════════════════════
-const SPECS = [
+const SPECS=[
   {id:1,name:"Dr. Leila Mansouri",title:"Psychiatre",emoji:"👩‍⚕️",rating:4.9,reviews:87,price:85,tags:["Anxiété","Dépression","TCC"],langs:["FR","AR","EN"],types:["video","presentiel"],next:"Demain, 10h00"},
   {id:2,name:"M. Karim Benali",title:"Psychologue clinicien",emoji:"👨‍⚕️",rating:4.8,reviews:62,price:60,tags:["Burn-out","Trauma","Couple"],langs:["FR","AR"],types:["video","presentiel"],next:"Auj., 15h30"},
-  {id:3,name:"Mme. Sophie Durand",title:"Psychomotricienne",emoji:"👩‍⚕️",rating:4.7,reviews:44,price:55,tags:["Enfant","TDAH","Développement"],langs:["FR","EN"],types:["presentiel"],next:"23 Mai, 09h00"},
+  {id:3,name:"Mme. Sophie Durand",title:"Psychomotricienne",emoji:"👩‍⚕️",rating:4.7,reviews:44,price:55,tags:["Enfant","TDAH","Développement"],langs:["FR","EN"],types:["presentiel"],next:"24 Mai, 09h00"},
   {id:4,name:"Dr. Amine Chakroun",title:"Psychiatre",emoji:"👨‍⚕️",rating:4.9,reviews:120,price:90,tags:["Bipolaire","TCA","Psychose"],langs:["FR","AR","EN"],types:["video"],next:"Demain, 14h00"},
   {id:5,name:"Mme. Clara Petit",title:"Ergothérapeute",emoji:"👩‍⚕️",rating:4.6,reviews:31,price:65,tags:["Autisme","TSA","Rééducation"],langs:["FR","EN"],types:["video","presentiel"],next:"24 Mai, 11h00"},
   {id:6,name:"M. Yassine Trabelsi",title:"Orthophoniste",emoji:"👨‍⚕️",rating:4.8,reviews:58,price:50,tags:["Langage","Bégaiement","Dyslexie"],langs:["FR","AR"],types:["video","presentiel"],next:"Auj., 17h00"},
 ];
-
-const RDVS = [
-  {id:1,patient:"Amira Ben Salah",age:28,motive:"Anxiété généralisée",day:23,mon:"Mai",time:"10:00",type:"video",status:"pending",spec:"Dr. Leila Mansouri",specTitle:"Psychiatre"},
-  {id:2,patient:"Mehdi Touati",age:35,motive:"Burn-out professionnel",day:23,mon:"Mai",time:"11:30",type:"presentiel",status:"pending",spec:"Dr. Leila Mansouri",specTitle:"Psychiatre"},
-  {id:3,patient:"Nour Jebali",age:22,motive:"Troubles du sommeil",day:24,mon:"Mai",time:"14:00",type:"video",status:"pending",spec:"Dr. Leila Mansouri",specTitle:"Psychiatre"},
-  {id:4,patient:"Sami Khelif",age:41,motive:"Suivi thérapeutique",day:22,mon:"Mai",time:"09:00",type:"video",status:"confirmed",spec:"Dr. Leila Mansouri",specTitle:"Psychiatre"},
-  {id:5,patient:"Lina Achouri",age:19,motive:"Dépression légère",day:21,mon:"Mai",time:"15:30",type:"presentiel",status:"confirmed",spec:"Dr. Leila Mansouri",specTitle:"Psychiatre"},
-  {id:6,patient:"Fares Bouaziz",age:55,motive:"Phobies",day:20,mon:"Mai",time:"10:00",type:"video",status:"cancelled",spec:"Dr. Leila Mansouri",specTitle:"Psychiatre"},
+const RDVS=[
+  {id:1,patient:"Amira Ben Salah",age:28,motive:"Anxiété généralisée",day:23,mon:"Mai",time:"10:00",type:"video",status:"pending"},
+  {id:2,patient:"Mehdi Touati",age:35,motive:"Burn-out professionnel",day:23,mon:"Mai",time:"11:30",type:"presentiel",status:"pending"},
+  {id:3,patient:"Nour Jebali",age:22,motive:"Troubles du sommeil",day:24,mon:"Mai",time:"14:00",type:"video",status:"pending"},
+  {id:4,patient:"Sami Khelif",age:41,motive:"Suivi thérapeutique",day:22,mon:"Mai",time:"09:00",type:"video",status:"confirmed"},
+  {id:5,patient:"Lina Achouri",age:19,motive:"Dépression légère",day:21,mon:"Mai",time:"15:30",type:"presentiel",status:"confirmed"},
+  {id:6,patient:"Fares Bouaziz",age:55,motive:"Phobies",day:20,mon:"Mai",time:"10:00",type:"video",status:"cancelled"},
 ];
-
-const NOTIFS = [
-  {id:1,type:"new",icon:"📬",title:"Nouveau RDV demandé",desc:"Amira Ben Salah a demandé une consultation vidéo pour le 23 Mai à 10h00.",time:"Il y a 5 min",unread:true,rdvId:1},
-  {id:2,type:"new",icon:"📬",title:"Nouveau RDV demandé",desc:"Mehdi Touati a demandé une consultation en présentiel pour le 23 Mai à 11h30.",time:"Il y a 18 min",unread:true,rdvId:2},
-  {id:3,type:"new",icon:"📬",title:"Nouveau RDV demandé",desc:"Nour Jebali a demandé une consultation vidéo pour le 24 Mai à 14h00.",time:"Il y a 2h",unread:true,rdvId:3},
-  {id:4,type:"remind",icon:"⏰",title:"Rappel automatique envoyé",desc:"Email de rappel 24h envoyé à Sami Khelif pour son RDV du 22 Mai à 09h00.",time:"Hier 09:00",unread:false},
-  {id:5,type:"cancel",icon:"❌",title:"RDV annulé",desc:"Fares Bouaziz a annulé son RDV du 20 Mai à 10h00.",time:"Il y a 3j",unread:false},
+const NOTIFS=[
+  {id:1,type:"new",icon:"📬",title:"Nouveau RDV demandé",desc:"Amira Ben Salah — consultation vidéo le 23 Mai à 10h00.",time:"Il y a 5 min",unread:true,rdvId:1},
+  {id:2,type:"new",icon:"📬",title:"Nouveau RDV demandé",desc:"Mehdi Touati — consultation présentiel le 23 Mai à 11h30.",time:"Il y a 18 min",unread:true,rdvId:2},
+  {id:3,type:"new",icon:"📬",title:"Nouveau RDV demandé",desc:"Nour Jebali — consultation vidéo le 24 Mai à 14h00.",time:"Il y a 2h",unread:true,rdvId:3},
+  {id:4,type:"remind",icon:"⏰",title:"Rappel automatique envoyé",desc:"Email de rappel 24h envoyé à Sami Khelif.",time:"Hier 09:00",unread:false},
+  {id:5,type:"cancel",icon:"❌",title:"RDV annulé",desc:"Fares Bouaziz a annulé son RDV du 20 Mai.",time:"Il y a 3j",unread:false},
 ];
-
-const REMINDER_LOG = [
+const REMINDER_LOG=[
   {patient:"Sami Khelif",type:"24h",date:"22 Mai 09:00",status:"✅ Envoyé",email:"s.khelif@email.com"},
   {patient:"Lina Achouri",type:"2h",date:"21 Mai 13:30",status:"✅ Envoyé",email:"l.achouri@email.com"},
   {patient:"Lina Achouri",type:"24h",date:"20 Mai 15:30",status:"✅ Envoyé",email:"l.achouri@email.com"},
-  {patient:"Amira Ben Salah",type:"Confirmation",date:"23 Mai — En attente",status:"⏳ En attente confirmation pro",email:"a.bensalah@email.com"},
+  {patient:"Amira Ben Salah",type:"Confirmation",date:"En attente validation",status:"⏳ En attente",email:"a.bensalah@email.com"},
 ];
+const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
-// ═══════════════════════════════════════════════
 // STATE
-// ═══════════════════════════════════════════════
-let currentSpec = null;
-let selDate = null;
-let selSlot = null;
-let selType = 'video';
-let mCalYear, mCalMonth;
-const now = new Date();
-mCalYear = now.getFullYear();
-mCalMonth = now.getMonth();
-let isLoggedIn = false;
-let isPro = false;
+let currentSpec=null,selDate=null,selSlot=null,selType='video';
+let mCalYear,mCalMonth;
+const now=new Date();mCalYear=now.getFullYear();mCalMonth=now.getMonth();
 
-// ═══════════════════════════════════════════════
-// VIEW ROUTER
-// ═══════════════════════════════════════════════
+// MOBILE MENU
+function openMobileMenu(){document.getElementById('mobile-menu').classList.add('open');document.body.style.overflow='hidden'}
+function closeMobileMenu(){document.getElementById('mobile-menu').classList.remove('open');document.body.style.overflow=''}
+
+// LANG
+function setLang(l){
+  ['fr','en','ar'].forEach(x=>{
+    document.querySelectorAll('.lang-btn, .mm-lang').forEach(b=>{if(b.textContent.trim().toUpperCase()===x.toUpperCase())b.classList.toggle('active',x===l)});
+  });
+  document.documentElement.setAttribute('lang',l);
+  document.documentElement.setAttribute('dir',l==='ar'?'rtl':'ltr');
+  showToast(l==='fr'?'🇫🇷 Français':l==='en'?'🇬🇧 English':'🇩🇿 العربية','info');
+}
+
+// VIEWS
 function showView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-  if(v==='home') document.querySelectorAll('.nav-tab')[0].classList.add('active');
-  if(v==='pro-dashboard') document.querySelectorAll('.nav-tab')[1].classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ═══════════════════════════════════════════════
 // AUTH
-// ═══════════════════════════════════════════════
 function switchAuthTab(t){
   document.getElementById('tab-patient').classList.toggle('active',t==='patient');
   document.getElementById('tab-pro').classList.toggle('active',t==='pro');
-  document.getElementById('auth-patient').style.display=t==='patient'?'':'none';
-  document.getElementById('auth-pro').style.display=t==='pro'?'':'none';
+  document.getElementById('auth-patient').style.display=t==='patient'?'block':'none';
+  document.getElementById('auth-pro').style.display=t==='pro'?'block':'none';
 }
 function loginPatient(){
-  isLoggedIn=true;isPro=false;
   document.getElementById('nav-login-btn').style.display='none';
   document.getElementById('nav-signup-btn').style.display='none';
   document.getElementById('nav-logout-btn').style.display='';
+  document.getElementById('mm-auth-section').style.display='none';
+  document.getElementById('mm-logout-section').style.display='';
   showView('home');
   showToast('✅ Connecté en tant que patient','success');
 }
 function loginPro(){
-  isLoggedIn=true;isPro=true;
   document.getElementById('nav-login-btn').style.display='none';
   document.getElementById('nav-signup-btn').style.display='none';
   document.getElementById('nav-logout-btn').style.display='';
-  document.getElementById('pro-tab').style.display='';
-  document.getElementById('notif-bell-btn').style.display='';
+  document.getElementById('mm-pro-btn').style.display='';
+  document.getElementById('ham-dot').style.display='';
+  document.getElementById('mm-auth-section').style.display='none';
+  document.getElementById('mm-logout-section').style.display='';
   showView('pro-dashboard');
-  showToast('✅ Connecté — Espace professionnel','success');
   renderDashboard();
+  showToast('✅ Bienvenue Dr. Mansouri !','success');
 }
 function logout(){
-  isLoggedIn=false;isPro=false;
   document.getElementById('nav-login-btn').style.display='';
   document.getElementById('nav-signup-btn').style.display='';
   document.getElementById('nav-logout-btn').style.display='none';
-  document.getElementById('pro-tab').style.display='none';
-  document.getElementById('notif-bell-btn').style.display='none';
-  showView('home');
-  showToast('👋 Déconnecté','info');
+  document.getElementById('mm-pro-btn').style.display='none';
+  document.getElementById('ham-dot').style.display='none';
+  document.getElementById('mm-auth-section').style.display='';
+  document.getElementById('mm-logout-section').style.display='none';
+  showView('home');showToast('👋 Déconnecté','info');
 }
 
-// ═══════════════════════════════════════════════
-// SPEC GRID
-// ═══════════════════════════════════════════════
+// SPECS
 function renderSpecs(list){
   const g=document.getElementById('spec-grid');
   g.innerHTML=list.map(s=>`
     <div class="spec-card" onclick="openBooking(${s.id})">
       <div class="card-top">
         <div class="avatar">${s.emoji}</div>
-        <div>
-          <p class="c-name">${s.name}</p>
-          <p class="c-title">${s.title}</p>
-          <div class="stars">${'★'.repeat(Math.floor(s.rating))}${'☆'.repeat(5-Math.floor(s.rating))}<span>${s.rating} (${s.reviews})</span></div>
-        </div>
+        <div><p class="c-name">${s.name}</p><p class="c-title">${s.title}</p>
+        <div class="stars">${'★'.repeat(Math.floor(s.rating))}${'☆'.repeat(5-Math.floor(s.rating))}<span>${s.rating} (${s.reviews})</span></div></div>
       </div>
       <div class="card-tags">
         ${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
@@ -951,8 +974,7 @@ function renderSpecs(list){
         <div class="next-slot"><span>Prochain créneau</span><strong>${s.next}</strong></div>
       </div>
       <button class="btn-book-card">Prendre rendez-vous</button>
-    </div>
-  `).join('');
+    </div>`).join('');
   document.getElementById('spec-count').textContent=list.length+' résultat'+(list.length>1?'s':'');
 }
 function filterSpecs(){
@@ -961,19 +983,17 @@ function filterSpecs(){
   const tp=document.getElementById('home-filter-type').value;
   renderSpecs(SPECS.filter(s=>{
     const mQ=!q||s.name.toLowerCase().includes(q)||s.title.toLowerCase().includes(q)||s.tags.some(t=>t.toLowerCase().includes(q));
-    const mS=!sp||s.title.includes(sp.replace('Psychologue','Psychologue'));
+    const mS=!sp||s.title.includes(sp);
     const mT=!tp||s.types.includes(tp);
     return mQ&&mS&&mT;
   }));
 }
 
-// ═══════════════════════════════════════════════
-// BOOKING MODAL
-// ═══════════════════════════════════════════════
+// BOOKING
 function openBooking(id){
   currentSpec=SPECS.find(s=>s.id===id);
   selDate=null;selSlot=null;selType='video';
-  document.getElementById('modal-spec-name').textContent='Consultation — '+currentSpec.name;
+  document.getElementById('modal-spec-name').textContent=currentSpec.name;
   document.getElementById('sum-spec-name').textContent=currentSpec.name;
   document.getElementById('sum-spec-title').textContent=currentSpec.title;
   document.getElementById('sum-price-val').textContent=currentSpec.price+' €';
@@ -990,10 +1010,7 @@ function openBooking(id){
   document.getElementById('booking-modal').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function closeModal(){
-  document.getElementById('booking-modal').classList.remove('open');
-  document.body.style.overflow='';
-}
+function closeModal(){document.getElementById('booking-modal').classList.remove('open');document.body.style.overflow='';}
 function modalStep(n){
   [1,2,3].forEach(i=>{
     document.getElementById('mp-'+i).classList.toggle('active',i===n);
@@ -1012,11 +1029,7 @@ function selType(t){
   document.getElementById('sum2-type').textContent=lbl;
 }
 
-// ═══════════════════════════════════════════════
-// MODAL CALENDAR
-// ═══════════════════════════════════════════════
-const MONTHS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+// CALENDAR
 function renderMCal(){
   document.getElementById('m-cal-month').textContent=MONTHS[mCalMonth]+' '+mCalYear;
   const g=document.getElementById('m-cal-grid');
@@ -1034,8 +1047,7 @@ function renderMCal(){
     const selStr=selDate?new Date(selDate).toDateString():'';
     const isSel=date.toDateString()===selStr;
     let cls='cday';
-    if(isPast)cls+=' past';
-    else if(isToday)cls+=' today';
+    if(isPast)cls+=' past';else if(isToday)cls+=' today';
     if(hasSlot)cls+=' has-slot';
     if(isSel)cls+=' selected';
     g.innerHTML+=`<div class="${cls}" onclick="${isPast||!hasSlot?'':`pickMDate('${date.toISOString()}')`}">${d}</div>`;
@@ -1045,8 +1057,7 @@ function prevMo(){mCalMonth--;if(mCalMonth<0){mCalMonth=11;mCalYear--;}renderMCa
 function nextMo(){mCalMonth++;if(mCalMonth>11){mCalMonth=0;mCalYear++;}renderMCal();}
 function pickMDate(iso){
   selDate=iso;selSlot=null;
-  renderMCal();
-  renderMSlots();
+  renderMCal();renderMSlots();
   document.getElementById('m-slots-area').style.display='block';
   document.getElementById('btn-step1-next').disabled=true;
   updateModalSum();
@@ -1054,16 +1065,13 @@ function pickMDate(iso){
 const ALL_SLOTS=["09:00","09:30","10:00","10:30","11:00","14:00","14:30","15:00","15:30","16:00","16:30","17:00"];
 const BUSY=["10:00","14:30","16:00"];
 function renderMSlots(){
-  const g=document.getElementById('m-slots-grid');
-  g.innerHTML=ALL_SLOTS.map(s=>{
-    const busy=BUSY.includes(s);
-    const sel=s===selSlot;
+  document.getElementById('m-slots-grid').innerHTML=ALL_SLOTS.map(s=>{
+    const busy=BUSY.includes(s);const sel=s===selSlot;
     return `<button class="slot${busy?' busy':''}${sel?' sel':''}" onclick="${busy?'':`pickMSlot('${s}')`}">${s}</button>`;
   }).join('');
 }
 function pickMSlot(s){
-  selSlot=s;
-  renderMSlots();
+  selSlot=s;renderMSlots();
   document.getElementById('btn-step1-next').disabled=false;
   updateModalSum();
 }
@@ -1082,321 +1090,137 @@ function submitBooking(){
   if(!fn||!email){showToast('⚠️ Remplissez les champs obligatoires','info');return;}
   const d=new Date(selDate);
   const dateStr=`${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()} · ${selSlot}`;
-  const typeTxt=selType==='video'?'Vidéo sécurisée':'En présentiel';
   document.getElementById('cv-spec').textContent=currentSpec.name;
   document.getElementById('cv-spe').textContent=currentSpec.title;
   document.getElementById('cv-date').textContent=dateStr;
-  document.getElementById('cv-type').textContent=typeTxt;
+  document.getElementById('cv-type').textContent=selType==='video'?'Vidéo sécurisée':'En présentiel';
   modalStep(3);
-  // Simulate notif to pro
-  setTimeout(()=>showToast('📬 Notification envoyée au praticien + email de confirmation','success'),600);
+  setTimeout(()=>showToast('📬 Notification envoyée au praticien','success'),600);
 }
-function addCal(){showToast('📅 Fichier .ics généré — Google Calendar / Outlook','success');}
 
-// ═══════════════════════════════════════════════
-// PRO DASHBOARD
-// ═══════════════════════════════════════════════
+// DASHBOARD
 function renderDashboard(){
-  renderOverviewRdvs();
-  renderMainRdvs('all');
-  renderWeekCal();
-  renderAvail();
-  renderNotifs();
-  renderReminderLog();
+  renderOverviewRdvs();renderMainRdvs('all');renderWeekCal();renderAvail();renderNotifs();renderReminderLog();
 }
-
 function showDash(sec){
   document.querySelectorAll('.dash-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('dash-'+sec).classList.add('active');
-  document.querySelectorAll('.snav-item').forEach(s=>s.classList.remove('active'));
   const map={overview:0,rdvs:1,agenda:2,availability:3,notifications:4,reminders:5,profile:6};
-  document.querySelectorAll('.snav-item')[map[sec]].classList.add('active');
+  document.querySelectorAll('.snav-item').forEach((s,i)=>s.classList.toggle('active',i===map[sec]));
 }
-
-function rdvCard(r,mini=false){
-  const statusMap={pending:'pending',confirmed:'confirmed',cancelled:'cancelled'};
+function rdvCard(r){
   const statusLbl={pending:'En attente',confirmed:'Confirmé',cancelled:'Annulé'};
-  const actions = r.status==='pending'
-    ? `<button class="btn-accept" onclick="acceptRdv(${r.id})">✓ Accepter</button><button class="btn-decline" onclick="declineRdv(${r.id})">✕ Refuser</button>`
-    : r.status==='confirmed'
-    ? `<button class="btn-join">📹 Rejoindre</button><span class="status-badge confirmed">${statusLbl[r.status]}</span>`
-    : `<span class="status-badge cancelled">${statusLbl[r.status]}</span>`;
-  return `
-    <div class="rdv-item ${statusMap[r.status]}" id="rdv-${r.id}">
-      <div class="rdv-date-box"><div class="rdv-day">${r.day}</div><div class="rdv-mon">${r.mon}</div></div>
-      <div class="rdv-info">
-        <p class="rdv-patient">${r.patient} <span style="font-size:.7rem;font-weight:400;color:var(--soft)">(${r.age} ans)</span></p>
-        <p class="rdv-meta">🔹 ${r.motive} · ${r.type==='video'?'📹 Vidéo':'🏥 Présentiel'}</p>
-      </div>
-      <div class="rdv-time">${r.time}<span>${r.type==='video'?'Vidéo':'Présentiel'}</span></div>
-      <div class="rdv-actions">${actions}</div>
-    </div>`;
+  const actions=r.status==='pending'
+    ?`<button class="btn-accept" onclick="acceptRdv(${r.id})">✓ Accepter</button><button class="btn-decline" onclick="declineRdv(${r.id})">✕ Refuser</button>`
+    :r.status==='confirmed'
+    ?`<button class="btn-join">📹 Rejoindre</button><span class="status-badge confirmed">${statusLbl.confirmed}</span>`
+    :`<span class="status-badge cancelled">${statusLbl.cancelled}</span>`;
+  return `<div class="rdv-item ${r.status}" id="rdv-${r.id}">
+    <div class="rdv-date-box"><div class="rdv-day">${r.day}</div><div class="rdv-mon">${r.mon}</div></div>
+    <div class="rdv-info"><p class="rdv-patient">${r.patient} <span style="font-size:.68rem;font-weight:400;color:var(--soft)">(${r.age} ans)</span></p>
+    <p class="rdv-meta">🔹 ${r.motive} · ${r.type==='video'?'📹 Vidéo':'🏥 Présentiel'}</p></div>
+    <div class="rdv-time">${r.time}<span>${r.type==='video'?'Vidéo':'Présentiel'}</span></div>
+    <div class="rdv-actions">${actions}</div>
+  </div>`;
 }
 function renderOverviewRdvs(){
-  const pending=RDVS.filter(r=>r.status==='pending');
-  document.getElementById('overview-rdv-list').innerHTML=pending.map(r=>rdvCard(r)).join('');
-  document.getElementById('pending-badge').textContent=pending.length;
+  const p=RDVS.filter(r=>r.status==='pending');
+  document.getElementById('overview-rdv-list').innerHTML=p.map(r=>rdvCard(r)).join('');
+  document.getElementById('pending-badge').textContent=p.length;
 }
-function renderMainRdvs(filter){
-  const list=filter==='all'?RDVS:RDVS.filter(r=>r.status===filter);
+function renderMainRdvs(f){
+  const list=f==='all'?RDVS:RDVS.filter(r=>r.status===f);
   document.getElementById('main-rdv-list').innerHTML=list.map(r=>rdvCard(r)).join('');
 }
 function filterRdv(f,btn){
   document.querySelectorAll('.filter-tabs .ftab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderMainRdvs(f);
+  btn.classList.add('active');renderMainRdvs(f);
 }
 function acceptRdv(id){
-  const r=RDVS.find(x=>x.id===id);
-  r.status='confirmed';
-  renderOverviewRdvs();
-  renderMainRdvs('all');
+  const r=RDVS.find(x=>x.id===id);r.status='confirmed';
+  renderOverviewRdvs();renderMainRdvs('all');
   document.getElementById('pending-badge').textContent=RDVS.filter(x=>x.status==='pending').length;
   showToast(`✅ RDV de ${r.patient} confirmé — email envoyé`,'success');
-  // Simulate email + calendar update
-  setTimeout(()=>showToast('📅 Événement ajouté à votre Google Calendar','info'),1200);
+  setTimeout(()=>showToast('📅 Ajouté à votre Google Calendar','info'),1400);
 }
 function declineRdv(id){
-  const r=RDVS.find(x=>x.id===id);
-  r.status='cancelled';
-  renderOverviewRdvs();
-  renderMainRdvs('all');
+  const r=RDVS.find(x=>x.id===id);r.status='cancelled';
+  renderOverviewRdvs();renderMainRdvs('all');
   document.getElementById('pending-badge').textContent=RDVS.filter(x=>x.status==='pending').length;
   showToast(`❌ RDV de ${r.patient} refusé — patient notifié`,'info');
 }
-
-// ═══════════════════════════════════════════════
-// WEEK CALENDAR
-// ═══════════════════════════════════════════════
 function renderWeekCal(){
   const wc=document.getElementById('week-cal');
   const weekDays=['Lun 19','Mar 20','Mer 21','Jeu 22','Ven 23','Sam 24','Dim 25'];
   const hours=['09:00','09:30','10:00','10:30','11:00','11:30','12:00','13:00','14:00','14:30','15:00','15:30','16:00','16:30','17:00'];
-  const events={
-    'Jeu 22-09:00':{label:'Sami K.',cls:'confirmed',span:2},
-    'Ven 23-10:00':{label:'Amira B.',cls:'pending video',span:2},
-    'Ven 23-11:30':{label:'Mehdi T.',cls:'pending',span:2},
-    'Sam 24-14:00':{label:'Nour J.',cls:'video',span:2},
-  };
+  const events={'Jeu 22-09:00':{label:'Sami K.',cls:'confirmed'},'Ven 23-10:00':{label:'Amira B.',cls:'pending video'},'Ven 23-11:30':{label:'Mehdi T.',cls:'pending'},'Sam 24-14:00':{label:'Nour J.',cls:'video'}};
   let html=`<div class="wg-header"></div>${weekDays.map(d=>`<div class="wg-header">${d}</div>`).join('')}`;
   hours.forEach(h=>{
     html+=`<div class="wg-time">${h}</div>`;
-    weekDays.forEach(d=>{
-      const key=`${d}-${h}`;
-      const ev=events[key];
-      html+=`<div class="wg-cell">${ev?`<div class="wg-event ${ev.cls}">${ev.label}</div>`:''}</div>`;
-    });
+    weekDays.forEach(d=>{const ev=events[`${d}-${h}`];html+=`<div class="wg-cell">${ev?`<div class="wg-event ${ev.cls}">${ev.label}</div>`:''}</div>`;});
   });
-  wc.innerHTML=`<div class="week-nav"><button onclick="">‹</button><span class="week-lbl">Semaine du 19 au 25 Mai 2026</span><button onclick="">›</button></div><div class="week-grid" style="grid-template-columns:60px repeat(7,1fr)">${html}</div>`;
+  wc.innerHTML=`<div class="week-nav"><button>‹</button><span class="week-lbl">Semaine 19–25 Mai 2026</span><button>›</button></div><div class="week-grid">${html}</div>`;
 }
-
-// ═══════════════════════════════════════════════
-// AVAILABILITY
-// ═══════════════════════════════════════════════
-const DAY_NAMES=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche'];
-const DAY_ACTIVE=[true,true,true,true,true,false,false];
 function renderAvail(){
-  document.getElementById('avail-grid').innerHTML=DAY_NAMES.map((d,i)=>`
-    <div class="avail-day">
-      <div class="avail-day-name">${d.substring(0,3)}</div>
-      <div class="avail-toggle">
-        <label class="toggle-sw"><input type="checkbox" ${DAY_ACTIVE[i]?'checked':''} onchange="toggleDay(${i},this.checked)"/><span class="toggle-sl"></span></label>
-      </div>
-      <div class="avail-slots" id="avail-${i}">${DAY_ACTIVE[i]?'09:00–17:00':'Fermé'}</div>
-    </div>
-  `).join('');
-  const slotsBtns=['09:00','09:30','10:00','10:30','11:00','11:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00'];
-  document.getElementById('avail-slots-grid').innerHTML=slotsBtns.map(s=>`
-    <button class="slot sel" onclick="this.classList.toggle('sel')">${s}</button>
-  `).join('');
+  const days=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const active=[true,true,true,true,true,false,false];
+  document.getElementById('avail-grid').innerHTML=days.map((d,i)=>`
+    <div class="avail-day"><div class="avail-day-name">${d}</div>
+    <label class="toggle-sw"><input type="checkbox" ${active[i]?'checked':''} onchange="document.getElementById('av${i}').textContent=this.checked?'09h–17h':'Fermé'"/><span class="toggle-sl"></span></label>
+    <div class="avail-slots" id="av${i}">${active[i]?'09h–17h':'Fermé'}</div></div>`).join('');
+  document.getElementById('avail-slots-grid').innerHTML=["09:00","09:30","10:00","10:30","11:00","11:30","14:00","14:30","15:00","15:30","16:00","17:00"].map(s=>`<button class="slot sel" onclick="this.classList.toggle('sel')">${s}</button>`).join('');
 }
-function toggleDay(i,active){
-  document.getElementById('avail-'+i).textContent=active?'09:00–17:00':'Fermé';
-}
-
-// ═══════════════════════════════════════════════
-// NOTIFICATIONS
-// ═══════════════════════════════════════════════
 function renderNotifs(){
   document.getElementById('notif-list').innerHTML=NOTIFS.map(n=>`
     <div class="notif-item ${n.unread?'unread':''}" id="ni-${n.id}">
-      ${n.unread?'':'<div style="width:8px;flex-shrink:0"></div>'}
       <div class="notif-ico ${n.type}">${n.icon}</div>
       <div class="notif-body">
-        <p class="notif-title">${n.title}</p>
-        <p class="notif-desc">${n.desc}</p>
+        <p class="notif-title">${n.title}</p><p class="notif-desc">${n.desc}</p>
         <p class="notif-time">${n.time}</p>
-        ${n.rdvId?`<div class="notif-actions"><button class="btn-accept" onclick="acceptRdv(${n.rdvId});markRead(${n.id})">✓ Accepter</button><button class="btn-decline" onclick="declineRdv(${n.rdvId});markRead(${n.id})">✕ Refuser</button></div>`:''}
+        ${n.rdvId?`<div class="notif-actions"><button class="btn-accept" onclick="acceptRdv(${n.rdvId})">✓ Accepter</button><button class="btn-decline" onclick="declineRdv(${n.rdvId})">✕ Refuser</button></div>`:''}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-function markRead(id){
-  const n=NOTIFS.find(x=>x.id===id);
-  if(n)n.unread=false;
-  renderNotifs();
-}
-function markAllRead(){
-  NOTIFS.forEach(n=>n.unread=false);
-  renderNotifs();
-  showToast('✅ Toutes les notifications marquées comme lues','success');
-}
-
-// ═══════════════════════════════════════════════
-// REMINDER LOG
-// ═══════════════════════════════════════════════
+function markAllRead(){NOTIFS.forEach(n=>n.unread=false);renderNotifs();showToast('✅ Tout marqué comme lu','success');}
 function renderReminderLog(){
   document.getElementById('reminder-log').innerHTML=REMINDER_LOG.map(r=>`
-    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:.8rem">
-        <div style="width:36px;height:36px;border-radius:9px;background:var(--teal-xl);display:flex;align-items:center;justify-content:center;font-size:.9rem">${r.type==='Confirmation'?'📧':'⏰'}</div>
-        <div>
-          <p style="font-size:.85rem;font-weight:600;color:var(--ch)">${r.patient}</p>
-          <p style="font-size:.73rem;color:var(--soft)">${r.email}</p>
-        </div>
-      </div>
-      <div style="text-align:center"><p style="font-size:.72rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.04em">Type</p><p style="font-size:.82rem;font-weight:500;color:var(--ch)">${r.type==='Confirmation'?'Confirmation immédiate':r.type==='24h'?'Rappel 24h avant':'Rappel 2h avant'}</p></div>
-      <div style="text-align:center"><p style="font-size:.72rem;font-weight:600;color:var(--mid);text-transform:uppercase;letter-spacing:.04em">Date</p><p style="font-size:.82rem;color:var(--ch)">${r.date}</p></div>
-      <span style="font-size:.78rem;font-weight:500;padding:.3rem .7rem;border-radius:20px;background:${r.status.includes('✅')?'var(--green-l)':'var(--orange-l)'};color:${r.status.includes('✅')?'var(--green)':'var(--orange)'}">${r.status}</span>
-    </div>
-  `).join('');
+    <div style="background:var(--white);border:1.5px solid var(--border);border-radius:10px;padding:.9rem 1rem;display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">
+      <div style="width:34px;height:34px;border-radius:8px;background:var(--teal-xl);display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0">${r.type==='Confirmation'?'📧':'⏰'}</div>
+      <div style="flex:1;min-width:120px"><p style="font-size:.83rem;font-weight:600;color:var(--ch)">${r.patient}</p><p style="font-size:.7rem;color:var(--soft)">${r.email}</p></div>
+      <div style="font-size:.78rem;color:var(--mid)">${r.type==='Confirmation'?'Confirmation immédiate':r.type==='24h'?'Rappel 24h avant':'Rappel 2h avant'} · ${r.date}</div>
+      <span style="font-size:.75rem;font-weight:500;padding:.25rem .65rem;border-radius:20px;background:${r.status.includes('✅')?'var(--green-l)':'var(--orange-l)'};color:${r.status.includes('✅')?'var(--green)':'var(--orange)'}">${r.status}</span>
+    </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════
 // EMAIL PREVIEWS
-// ═══════════════════════════════════════════════
-const EMAIL_TEMPLATES = {
-  confirm:{
-    title:'✅ Confirmation de RDV — Psycholab',
-    to:'Patient (amira.bensalah@email.com)',
-    from:'no-reply@psycholab.fr',
-    subject:'Votre rendez-vous du 23 Mai est confirmé',
-    body:`
-      <p class="email-hi">Bonjour Amira,</p>
-      <p>Votre rendez-vous Psycholab a bien été confirmé. Retrouvez les détails ci-dessous :</p>
-      <div class="email-details-box">
-        <div><span>Praticien</span><span>Dr. Leila Mansouri</span></div>
-        <div><span>Spécialité</span><span>Psychiatre</span></div>
-        <div><span>Date</span><span>Vendredi 23 Mai 2026 · 10h00</span></div>
-        <div><span>Type</span><span>📹 Vidéo sécurisée (chiffrement E2E)</span></div>
-        <div><span>Durée</span><span>50 minutes</span></div>
-      </div>
-      <p>Pour rejoindre votre consultation vidéo :</p>
-      <a class="email-link-btn" href="#">📹 Rejoindre la consultation</a>
-      <p>Vous recevrez un rappel automatique <strong>24h avant</strong> puis <strong>2h avant</strong> votre rendez-vous.</p>
-      <p>Pour ajouter ce RDV à votre agenda :</p>
-      <a class="email-link-btn" href="#" style="background:var(--mid)">📅 Ajouter à Google Calendar</a>
-      <div class="email-footer-txt">
-        En cas d'empêchement, merci d'annuler au moins 24h à l'avance via votre espace Psycholab.<br/>
-        Cet email est automatique — ne pas répondre directement.<br/>
-        <strong>Psycholab</strong> · Plateforme certifiée · Données chiffrées · RGPD
-      </div>
-    `
-  },
-  remind24:{
-    title:'⏰ Rappel 24h — Votre RDV demain',
-    to:'Patient (amira.bensalah@email.com)',
-    from:'no-reply@psycholab.fr',
-    subject:'Rappel : votre consultation Psycholab demain à 10h00',
-    body:`
-      <p class="email-hi">Bonjour Amira,</p>
-      <p>Nous vous rappelons que vous avez une consultation <strong>demain</strong> sur Psycholab :</p>
-      <div class="email-details-box">
-        <div><span>Praticien</span><span>Dr. Leila Mansouri</span></div>
-        <div><span>Date</span><span>Vendredi 23 Mai 2026 · 10h00</span></div>
-        <div><span>Type</span><span>📹 Vidéo sécurisée</span></div>
-      </div>
-      <p>Assurez-vous d'être dans un endroit calme et privé, avec une bonne connexion internet.</p>
-      <a class="email-link-btn" href="#">📹 Accéder à ma consultation</a>
-      <div class="email-footer-txt">
-        ⚠️ Pour annuler ou reporter, connectez-vous à votre espace Psycholab au moins 24h à l'avance.<br/>
-        <strong>Psycholab</strong> · Ce rappel a été envoyé automatiquement.
-      </div>
-    `
-  },
-  remind2:{
-    title:'⏰ Rappel 2h — Votre RDV commence bientôt',
-    to:'Patient (amira.bensalah@email.com)',
-    from:'no-reply@psycholab.fr',
-    subject:'Votre consultation commence dans 2 heures',
-    body:`
-      <p class="email-hi">Bonjour Amira,</p>
-      <p>Votre consultation avec <strong>Dr. Leila Mansouri</strong> commence <strong>dans 2 heures</strong> (à 10h00).</p>
-      <div class="email-details-box">
-        <div><span>Type</span><span>📹 Vidéo sécurisée</span></div>
-        <div><span>Heure</span><span>10h00 — Europe/Paris</span></div>
-      </div>
-      <p>Votre lien de connexion sécurisé :</p>
-      <a class="email-link-btn" href="#">📹 Rejoindre maintenant</a>
-      <p style="font-size:.8rem;color:var(--soft)">Conseil : connectez-vous 5 minutes avant pour tester votre caméra et micro.</p>
-      <div class="email-footer-txt"><strong>Psycholab</strong> · Rappel automatique — 2h avant</div>
-    `
-  },
-  pro_notify:{
-    title:'📬 Nouveau RDV demandé — Psycholab Pro',
-    to:'Dr. Leila Mansouri (l.mansouri@psycholab.fr)',
-    from:'pro-notify@psycholab.fr',
-    subject:'Nouvelle demande de consultation — Amira Ben Salah',
-    body:`
-      <p class="email-hi">Bonjour Dr. Mansouri,</p>
-      <p>Une nouvelle demande de consultation vient d'être reçue sur votre espace Psycholab :</p>
-      <div class="email-details-box">
-        <div><span>Patient</span><span>Amira Ben Salah, 28 ans</span></div>
-        <div><span>Motif</span><span>Anxiété généralisée</span></div>
-        <div><span>Date souhaitée</span><span>Vendredi 23 Mai 2026 · 10h00</span></div>
-        <div><span>Type</span><span>📹 Vidéo sécurisée</span></div>
-        <div><span>Fuseau</span><span>Europe/Paris (UTC+2)</span></div>
-      </div>
-      <p>Veuillez confirmer ou refuser cette demande depuis votre espace professionnel :</p>
-      <a class="email-link-btn" href="#">✅ Gérer ce RDV</a>
-      <p style="font-size:.8rem;color:var(--soft)">À la validation, le patient recevra automatiquement un email de confirmation avec le lien de consultation et son agenda sera synchronisé.</p>
-      <div class="email-footer-txt"><strong>Psycholab Pro</strong> · Notification automatique · Ne pas répondre directement</div>
-    `
-  }
+const EMAILS={
+  confirm:{title:'✅ Confirmation de RDV',to:'Amira Ben Salah (a.bensalah@email.com)',from:'no-reply@psycholab.fr',subject:'Votre rendez-vous du 23 Mai est confirmé',body:`<span class="email-hi">Bonjour Amira,</span><p>Votre rendez-vous est <strong>confirmé</strong> :</p><div class="email-details-box"><div><span>Praticien</span><span>Dr. Leila Mansouri</span></div><div><span>Date</span><span>23 Mai 2026 · 10h00</span></div><div><span>Type</span><span>📹 Vidéo sécurisée (E2E)</span></div><div><span>Durée</span><span>50 minutes</span></div></div><p>Rejoindre votre consultation :</p><button class="email-link-btn">📹 Rejoindre la consultation</button><p>Vous recevrez un rappel <strong>24h avant</strong> puis <strong>2h avant</strong>.</p><button class="email-link-btn" style="background:var(--mid)">📅 Ajouter à Google Calendar</button><div class="email-footer-txt"><strong>Psycholab</strong> · Plateforme certifiée · RGPD</div>`},
+  remind24:{title:'⏰ Rappel 24h — RDV demain',to:'Amira Ben Salah',from:'no-reply@psycholab.fr',subject:'Rappel : votre consultation demain à 10h00',body:`<span class="email-hi">Bonjour Amira,</span><p>Votre consultation est <strong>demain à 10h00</strong> :</p><div class="email-details-box"><div><span>Praticien</span><span>Dr. Leila Mansouri</span></div><div><span>Date</span><span>23 Mai 2026 · 10h00</span></div><div><span>Type</span><span>📹 Vidéo sécurisée</span></div></div><button class="email-link-btn">📹 Accéder à ma consultation</button><div class="email-footer-txt"><strong>Psycholab</strong> · Rappel automatique 24h avant</div>`},
+  remind2:{title:'⏰ Rappel 2h — Dans 2 heures',to:'Amira Ben Salah',from:'no-reply@psycholab.fr',subject:'Votre consultation commence dans 2 heures',body:`<span class="email-hi">Bonjour Amira,</span><p>Votre consultation avec <strong>Dr. Mansouri</strong> commence <strong>dans 2 heures</strong> (10h00).</p><button class="email-link-btn">📹 Rejoindre maintenant</button><p style="font-size:.78rem;color:var(--soft)">Connectez-vous 5 min avant pour tester votre caméra.</p><div class="email-footer-txt"><strong>Psycholab</strong> · Rappel automatique 2h avant</div>`},
+  pro_notify:{title:'📬 Nouveau RDV demandé',to:'Dr. Leila Mansouri (l.mansouri@psycholab.fr)',from:'pro@psycholab.fr',subject:'Nouvelle demande — Amira Ben Salah',body:`<span class="email-hi">Bonjour Dr. Mansouri,</span><p>Nouvelle demande de consultation :</p><div class="email-details-box"><div><span>Patient</span><span>Amira Ben Salah, 28 ans</span></div><div><span>Motif</span><span>Anxiété généralisée</span></div><div><span>Date</span><span>23 Mai 2026 · 10h00</span></div><div><span>Type</span><span>📹 Vidéo sécurisée</span></div></div><button class="email-link-btn">✅ Gérer ce RDV</button><div class="email-footer-txt"><strong>Psycholab Pro</strong> · Notification automatique</div>`}
 };
-
 function previewEmail(type){
-  const t=EMAIL_TEMPLATES[type];
-  document.getElementById('email-modal-title').textContent=t.title;
-  document.getElementById('email-meta').innerHTML=`
-    <div><strong>À :</strong> ${t.to}</div>
-    <div><strong>De :</strong> ${t.from}</div>
-    <div><strong>Objet :</strong> ${t.subject}</div>
-  `;
-  document.getElementById('email-body').innerHTML=t.body;
+  const e=EMAILS[type];
+  document.getElementById('email-modal-title').textContent=e.title;
+  document.getElementById('email-meta').innerHTML=`<div><strong>À :</strong> ${e.to}</div><div><strong>De :</strong> ${e.from}</div><div><strong>Objet :</strong> ${e.subject}</div>`;
+  document.getElementById('email-body').innerHTML=e.body;
   document.getElementById('email-modal').classList.add('open');
 }
 function closeEmailModal(){document.getElementById('email-modal').classList.remove('open');}
 
-// ═══════════════════════════════════════════════
 // TOAST
-// ═══════════════════════════════════════════════
-let toastTimer;
+let tt;
 function showToast(msg,type='info'){
   const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast '+type+' show';
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+  t.textContent=msg;t.className='toast '+type+' show';
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),4000);
 }
 
-// ═══════════════════════════════════════════════
-// AUTH FORM - demo helpers
-// ═══════════════════════════════════════════════
-function switchAuthTab(tab){
-  document.getElementById('tab-patient').classList.toggle('active',tab==='patient');
-  document.getElementById('tab-pro').classList.toggle('active',tab==='pro');
-  document.getElementById('auth-patient').style.display=tab==='patient'?'block':'none';
-  document.getElementById('auth-pro').style.display=tab==='pro'?'block':'none';
-}
-
-// Close modals on overlay click
+// Close on overlay click
 document.getElementById('booking-modal').addEventListener('click',function(e){if(e.target===this)closeModal();});
 document.getElementById('email-modal').addEventListener('click',function(e){if(e.target===this)closeEmailModal();});
 
-// ═══════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════
 renderSpecs(SPECS);
 </script>
 </body>
